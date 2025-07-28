@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🇦🇺 Australian PR Journey | Home</title>
+
+    <link rel="icon" href="/assets/favicon-48x48.ico" sizes="any">
+    <link rel="shortcut icon" href="/assets/favicon-48x48.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/android-chrome-512x512.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-top-bar">
+                <button class="hamburger-menu" id="hamburger-menu" aria-label="Open Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1>Visa Background</h1>
+                <div class="header-placeholder"></div>
+            </div>
+            <div class="date-time-container">
+                <span id="currentDate"></span>
+                <span id="currentTime"></span>
+            </div>
+            <nav class="navigation-menu" id="navigation-menu">
+                <button class="close-menu" id="close-menu" aria-label="Close Menu">×</button>
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="about.html"><i class="fas fa-user"></i> About Me</a></li>
+                    <li><a href="plan.html"><i class="fas fa-route"></i> My PR Plan</a></li>
+                    <li><a href="visa.html" class="active"><i class="fas fa-passport"></i> Visa Background</a></li>
+                    <li><a href="documents.html"><i class="fas fa-folder-open"></i> Documents Hub</a></li>
+                    <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+                    <li class="theme-switch-container">
+                        <div class="theme-switch-wrapper">
+                            <i class="fas fa-sun"></i>
+                            <label class="theme-switch" for="dark-mode-toggle">
+                                <input type="checkbox" id="dark-mode-toggle" />
+                                <span class="slider"></span>
+                            </label>
+                            <i class="fas fa-moon"></i>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+
+        <div class="main-content">
+            <div class="card">
+                <div class="card-header"><i class="fas fa-history"></i>Visa History & Status</div>
+                <div class="visa-history-list">
+                    <div class="visa-item">
+                        <h3>Temporary Graduate Visa (Subclass 485)</h3>
+                        <ul>
+                            <li><strong>Status:</strong> Active</li>
+                            <li><strong>Grant Date:</strong> 15 February 2025</li>
+                            <li><strong>Initial Expiry:</strong> 15 February 2027</li>
+                            <li><strong>Stream:</strong> Post-Study Work Stream</li>
+                            <li><strong>Conditions:</strong> Full study and work rights.</li>
+                            <li><strong>Notes:</strong> Eligible for a 1-year regional extension due to study in a designated regional area (Gold Coast).</li>
+                        </ul>
+                    </div>
+                    <div class="visa-item">
+                        <h3>Student Visa (Subclass 500)</h3>
+                        <ul>
+                            <li><strong>Status:</strong> Expired</li>
+                            <li><strong>Duration:</strong> Nov 2020 - Feb 2025</li>
+                            <li><strong>Institution:</strong> Griffith University (Gold Coast)</li>
+                            <li><strong>Course:</strong> Bachelor of Information Technology</li>
+                            <li><strong>Conditions:</strong> Limited work rights (48 hours/fortnight during semester).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <script src="js/main.js"></script>
+</body>
+</html>

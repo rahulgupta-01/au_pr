@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🇦🇺 Australian PR Journey | Home</title>
+
+    <link rel="icon" href="/assets/favicon-48x48.ico" sizes="any">
+    <link rel="shortcut icon" href="/assets/favicon-48x48.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/android-chrome-512x512.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-top-bar">
+                <button class="hamburger-menu" id="hamburger-menu" aria-label="Open Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1>PR Journey Dashboard</h1>
+                <div class="header-placeholder"></div>
+            </div>
+            <div class="date-time-container">
+                <span id="currentDate"></span>
+                <span id="currentTime"></span>
+            </div>
+            <nav class="navigation-menu" id="navigation-menu">
+                <button class="close-menu" id="close-menu" aria-label="Close Menu">×</button>
+                <ul>
+                    <li><a href="index.html" class="active"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="about.html"><i class="fas fa-user"></i> About Me</a></li>
+                    <li><a href="plan.html"><i class="fas fa-route"></i> My PR Plan</a></li>
+                    <li><a href="visa.html"><i class="fas fa-passport"></i> Visa Background</a></li>
+                    <li><a href="documents.html"><i class="fas fa-folder-open"></i> Documents Hub</a></li>
+                    <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+                    <li class="theme-switch-container">
+                        <div class="theme-switch-wrapper">
+                            <i class="fas fa-sun"></i>
+                            <label class="theme-switch" for="dark-mode-toggle">
+                                <input type="checkbox" id="dark-mode-toggle" />
+                                <span class="slider"></span>
+                            </label>
+                            <i class="fas fa-moon"></i>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+
+        <div class="main-content">
+            <div class="card key-metrics-panel">
+                <div class="metric-item">
+                    <div class="metric-header"><i class="fas fa-calendar-times"></i> Days to Visa Expiry</div>
+                    <div class="metric-value" id="daysRemaining">0</div>
+                    <div class="metric-detail" id="visaStatus">Subclass 485</div>
+                    <div class="progress-indicator"><div class="progress-fill" id="visaTimeProgress" style="background: var(--error-color);"></div></div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-header"><i class="fas fa-check-double"></i> Points Status</div>
+                    <div class="metric-value" id="currentPoints">0</div>
+                    <div class="metric-detail">Target: 95</div>
+                    <div class="progress-indicator"><div class="progress-fill" id="pointsProgress" style="background: var(--success-color);"></div></div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-header"><i class="fas fa-wallet"></i> Investment</div>
+                    <div class="metric-value" id="totalSpentDisplay">$0</div>
+                    <div class="metric-detail" id="totalBudgetDisplay">Budget: $27,750</div>
+                    <div class="progress-indicator"><div class="progress-fill" id="investmentProgress" style="background: var(--warning-color);"></div></div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-header"><i class="fas fa-flag-checkered"></i> Next Milestone In</div>
+                    <div class="metric-value" id="nextMilestoneCountdown">0</div>
+                    <div class="metric-detail" id="nextMilestoneTitle">Loading...</div>
+                    <div class="progress-indicator"><div class="progress-fill" id="milestoneProgress" style="background: var(--info-color);"></div></div>
+                </div>
+            </div>
+
+            <div class="dual-column-layout">
+                <div class="card">
+                    <div class="card-header">
+                        <span><i class="fas fa-calculator"></i>PR Points Calculator</span>
+                        <button id="resetDataBtn" class="reset-btn" title="Reset to Default"><i class="fas fa-undo"></i></button>
+                    </div>
+                    <div id="points-breakdown"></div>
+                    <div class="points-total-row">
+                        <span><strong>TOTAL POINTS</strong></span>
+                        <span id="currentTotalPoints">0</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span><i class="fas fa-dollar-sign"></i>Investment Tracker</span>
+                        <button id="resetDataBtn2" class="reset-btn" title="Reset to Default"><i class="fas fa-undo"></i></button>
+                    </div>
+                    <div id="cost-tracker"></div>
+                     <div class="cost-total">
+                        <span><strong>TOTAL SPENT</strong></span>
+                        <span id="total_cost_spent">$0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dual-column-layout">
+                <div class="card" id="alertsContainerCard">
+                    <div class="card-header"><i class="fas fa-bullhorn"></i>Status & Reminders</div>
+                    <div id="alertsContainer"></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><i class="fas fa-link"></i>Key Resources</div>
+                    <ul class="key-links-list">
+                        <li><a href="https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/skilled-independent-189/points-tested" target="_blank"><i class="fas fa-home"></i>Home Affairs Points Test</a></li>
+                        <li><a href="https://www.tradesrecognitionaustralia.gov.au/programs/job-ready-program" target="_blank"><i class="fas fa-tools"></i>TRA Job Ready Program</a></li>
+                        <li><a href="https://migration.wa.gov.au/services/skilled-migration-western-australia" target="_blank"><i class="fas fa-map-marked-alt"></i>WA State Migration</a></li>
+                        <li><a href="https://cricos.education.gov.au/Course/CourseDetails.aspx?CourseCode=108138G" target="_blank"><i class="fas fa-graduation-cap"></i>CRICOS Course Details</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <script src="js/main.js"></script>
+</body>
+</html>
