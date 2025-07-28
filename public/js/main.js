@@ -357,11 +357,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function renderTimeline(filter = 'all') {
             const timelineEl = document.getElementById('timeline');
-            const journeyStart = new Date('2025-02-15');
-            const journeyEnd = new Date('2028-04-15');
-            const totalJourneyDays = calcDays(journeyStart, journeyEnd);
-            const daysIntoJourney = calcDays(journeyStart, todayForCalculations);
-            const progressPercent = Math.min(100, Math.max(0, (daysIntoJourney / totalJourneyDays) * 100));
+            
+            // --- UPDATED LOGIC ---
+            const totalMilestones = milestones.length;
+            const completedMilestones = milestones.filter(m => new Date(m.date) < todayForCalculations).length;
+            const progressPercent = totalMilestones > 0 ? (completedMilestones / totalMilestones) * 100 : 0;
 
             timelineEl.innerHTML = `<div id="timeline-progress-fill" style="height: ${progressPercent}%"></div>` + milestones
                 .filter(m => filter === 'all' || m.phase === filter)
