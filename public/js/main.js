@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
           phase: 'visa', 
           details: 'Lodged the application for the Temporary Graduate (subclass 485) visa after completing my degree. A Bridging A visa was granted on this day.' 
         },
-        { id: 'it_grad', title: '🎓 IT Degree Completed', date: '2024-11-30', phase: 'study', details: 'Completed Bachelor of Information Technology at Griffith University. This qualification enables the 485 visa and forms the basis for Australian Study points.' },
+        { id: 'it_grad', title: '🎓 IT Degree Completed', date: '2024-11-05', phase: 'study', details: 'Completed Bachelor of Information Technology at Griffith University. This qualification enables the 485 visa and forms the basis for Australian Study points.' },
         { id: 'visa485', title: '🛂 485 Visa Granted', date: '2025-02-15', phase: 'visa', details: 'Subclass 485 visa granted, valid until Feb 2027. A 1-year regional extension is available due to study in Gold Coast.' },
         { id: 'cert_start', title: '🧱 Cert III Started', date: '2025-04-07', phase: 'study', details: 'Commenced CPC33020 Certificate III in Bricklaying at Skills Australia Institute, Perth, on the 485 visa.' },
         { id: 'cert_complete', title: '🎯 Cert III Completed', date: '2026-07-05', phase: 'study', details: 'Successfully qualified as a bricklayer. This unlocks the ability to apply for the Provisional Skills Assessment (PSA).' },
