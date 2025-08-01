@@ -1060,6 +1060,10 @@ body.dark-mode a {
     color: var(--info-color);
 }
 
+body.dark-mode .header {
+    background: var(--card-bg);
+}
+
 body.dark-mode .header-home-link {
     color: white;
 }
