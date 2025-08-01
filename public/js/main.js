@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const calcDays = (d1, d2) => Math.round((new Date(d2) - new Date(d1)) / (1000 * 60 * 60 * 24));
 
-    // Corrected milestone dates to match your list precisely
     const milestones = [
         { id: 'student_visa_1_grant', title: '🛂 First Student Visa Granted', date: '2021-01-20', phase: 'visa', details: 'Granted the initial Student (subclass 500) visa.' },
         { id: 'student_visa_2_apply', title: '📝 Applied for Visa Extension', date: '2023-08-23', phase: 'visa', details: 'Applied for a new Student Visa to cover the extended course duration.' },
@@ -94,7 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function initializeScrollToTop() {
-        // Create the button's HTML and add it to the page
         const buttonHTML = `
             <a href="#" id="scrollToTopBtn" class="scroll-to-top-btn" title="Go to top">
                 <i class="fas fa-chevron-up"></i>
@@ -102,7 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         document.body.insertAdjacentHTML('beforeend', buttonHTML);
     
-        // Now that the button exists, get a reference to it
         const scrollToTopBtn = document.getElementById('scrollToTopBtn');
     
         if (!scrollToTopBtn) return;
@@ -125,7 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function initializeDashboard() {
-        // This function's content remains unchanged
         const config = {
             userDOB: '2001-05-18', journeyStartDate: '2025-02-15', prGrantDate: '2028-04-15',
             initialVisaExpiryDate: '2027-02-15', finalVisaExpiryDate: '2028-02-15',
@@ -263,33 +259,28 @@ document.addEventListener('DOMContentLoaded', () => {
         state = loadState(); renderPoints(); renderCosts(); updateMetrics(); updateAlerts(); initializeResetButtons();
     }
     
-    // THIS IS THE UPDATED FUNCTION
+    // THIS IS THE CORRECTED FUNCTION
     function initializeTimeline() {
         function renderTimeline(filter = 'all') {
             const timelineEl = document.getElementById('timeline');
-
-            // 1. Get the milestones that are currently visible based on the filter.
             const visibleMilestones = milestones.filter(m => filter === 'all' || m.phase === filter);
             const totalVisible = visibleMilestones.length;
 
-            // 2. Find the index of the LAST completed milestone within that visible list.
-            // An event is complete if its date is today or in the past.
+            // An event is complete if its date is today or in the past (<=)
             const lastCompletedIndex = visibleMilestones.findLastIndex(m => new Date(m.date) <= todayForCalculations);
 
-            // 3. Calculate the percentage.
             let progressPercent = 0;
             if (lastCompletedIndex > -1 && totalVisible > 1) {
                 progressPercent = (lastCompletedIndex / (totalVisible - 1)) * 100;
             } else if (lastCompletedIndex > -1 && totalVisible === 1) {
+                // If there's only one item and it's complete, the bar is full
                 progressPercent = 100;
             }
 
-            // 4. Build the HTML using the new progressPercent and the filtered `visibleMilestones` array.
             timelineEl.innerHTML = `<div id="timeline-progress-fill" style="height: ${progressPercent}%"></div>` + visibleMilestones
                 .map(m => {
                     const mDate = new Date(m.date);
-                    // An event is complete if its date is today or in the past.
-                    const isCompleted = mDate <= todayForCalculations;
+                    const isCompleted = mDate <= todayForCalculations; // Use <= here as well for consistency
                     return `<div class="milestone" data-phase="${m.phase}"><div class="milestone-header" data-id="${m.id}"><div class="milestone-icon ${isCompleted ? 'completed' : 'future'}"><i class="fas fa-${isCompleted ? 'check' : 'hourglass-start'}"></i></div><div class="milestone-content"><div class="milestone-title">${m.title}</div><div class="milestone-date">${mDate.toLocaleDateString('en-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div></div></div><div class="milestone-details" id="details_${m.id}"><p>${m.details}</p></div></div>`;
                 }).join('');
                 
@@ -334,7 +325,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const headerPlaceholder = document.getElementById('header-placeholder');
         const footerPlaceholder = document.getElementById('footer-placeholder');
 
-        // --- Step 1: Load Header and Footer Components ---
         if (headerPlaceholder) {
             try {
                 const response = await fetch('_header.html');
@@ -371,10 +361,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
-        // --- Step 2: Run scripts that need the header to exist ---
         initializeHeaderDependentScripts();
 
-        // --- Step 3: Run all other scripts ---
         if (document.getElementById('currentDate')) {
             updateClock();
             setInterval(updateClock, 1000);
