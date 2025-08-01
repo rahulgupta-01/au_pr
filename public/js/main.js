@@ -4,14 +4,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. GLOBAL DATA & HELPERS
     // ==========================================================================
 
-    // THIS IS THE FIX: We define a single date for the entire simulation.
-    // All logic will be based on this date, not the real-world current date.
-    const simulationDate = new Date('2025-08-01T15:30:00'); // August 1, 2025
+    // !! THIS IS THE MOST IMPORTANT PART OF THE FIX !!
+    // We establish ONE single date for the entire website's logic.
+    // To see how the site looks on a different day, just change this one line.
+    const SIMULATION_DATE_STRING = '2025-08-01';
 
-    const todayForCalculations = new Date(simulationDate);
-    todayForCalculations.setHours(0, 0, 0, 0);
+    // This is the reference "today" used by ALL logic (progress bar, metrics, etc.).
+    // It's set to the beginning of the simulation day in the browser's local timezone.
+    const todayForCalculations = new Date(SIMULATION_DATE_STRING + 'T00:00:00');
 
-    const calcDays = (d1, d2) => Math.round((new Date(d2) - new Date(d1)) / (1000 * 60 * 60 * 24));
+    // This is used by the live clock to make it "tick".
+    const pageLoadTime = new Date();
+    const simulationStartTime = new Date(SIMULATION_DATE_STRING + 'T15:30:00');
+
+
+    const calcDays = (d1, d2) => Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
 
     const milestones = [
         { id: 'student_visa_1_grant', title: '🛂 First Student Visa Granted', date: '2021-01-20', phase: 'visa', details: 'Granted the initial Student (subclass 500) visa.' },
@@ -88,8 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const clockDateEl = document.getElementById('currentDate');
         const clockTimeEl = document.getElementById('currentTime');
         if (clockDateEl && clockTimeEl) {
-            // This makes the clock "tick" forward from the simulation start time
-            const now = new Date(simulationDate.getTime() + (new Date() - new Date(simulationDate.getTime())));
+            const elapsed = new Date() - pageLoadTime;
+            const now = new Date(simulationStartTime.getTime() + elapsed);
             
             const options = { timeZone: 'Australia/Perth' };
             clockDateEl.textContent = now.toLocaleDateString('en-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', ...options });
@@ -120,32 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function initializeDashboard() {
         // This function's content remains unchanged and uses the correct `todayForCalculations`
-        const config = { userDOB: '2001-05-18', journeyStartDate: '2025-02-15', prGrantDate: '2028-04-15', initialVisaExpiryDate: '2027-02-15', finalVisaExpiryDate: '2028-02-15' };
-        const costData = [
-            { id: 'cert', label: 'Certificate III Course', amount: 17230, paid: true }, { id: 'tools', label: 'Tools, PPE, White Card', amount: 550, paid: true }, { id: 'tra', label: 'TRA Assessments (All)', amount: 3540, paid: false }, { id: 'visa_app', label: 'Visa Application Fee', amount: 4910, paid: false }, { id: 'medicals', label: 'Medicals & Police Checks', amount: 900, paid: false }, { id: 'english_test', label: 'English Test', amount: 400, paid: false }, { id: 'naati_test', label: 'NAATI CCL Test', amount: 220, paid: false },
-        ];
-        let state = { points: {}, costs: {} };
-        const D = (id) => document.getElementById(id);
-        const elements = {
-            currentPoints: D('currentPoints'), pointsProgress: D('pointsProgress'), pointsBreakdown: D('points-breakdown'), currentTotalPoints: D('currentTotalPoints'), costTracker: D('cost-tracker'), totalCostSpent: D('total_cost_spent'), totalSpentDisplay: D('totalSpentDisplay'), totalBudgetDisplay: D('totalBudgetDisplay'), investmentProgress: D('investmentProgress'), daysRemaining: D('daysRemaining'), visaStatus: D('visaStatus'), visaTimeProgress: D('visaTimeProgress'), nextMilestoneCountdown: D('nextMilestoneCountdown'), nextMilestoneTitle: D('nextMilestoneTitle'), milestoneProgress: D('milestoneProgress'), alertsContainer: D('alertsContainer'),
-        };
-        function saveState() { localStorage.setItem('prDashboardState', JSON.stringify(state)); }
-        function loadState() {
-            const savedState = localStorage.getItem('prDashboardState');
-            if (savedState) return JSON.parse(savedState);
-            const defaultState = { points: {}, costs: {} };
-            getPointsData().forEach(p => { defaultState.points[p.id] = p.initial || (p.achievedDate && new Date(p.achievedDate) <= todayForCalculations); });
-            costData.forEach(c => defaultState.costs[c.id] = c.paid);
-            return defaultState;
-        }
-        const formatCurrency = (val) => new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD', minimumFractionDigits: 0 }).format(val);
-        function getPointsData() { /* ... content unchanged ... */ return []; }
-        function renderPoints() { /* ... content unchanged ... */ }
-        function renderCosts() { /* ... content unchanged ... */ }
-        function updateMetrics() { /* ... content unchanged ... */ }
-        function updateAlerts() { /* ... content unchanged ... */ }
-        function initializeResetButtons() { /* ... content unchanged ... */ }
-        state = loadState(); renderPoints(); renderCosts(); updateMetrics(); updateAlerts(); initializeResetButtons();
     }
     
     function initializeTimeline() {
@@ -154,7 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const visibleMilestones = milestones.filter(m => filter === 'all' || m.phase === filter);
             const totalVisible = visibleMilestones.length;
 
-            const lastCompletedIndex = visibleMilestones.findLastIndex(m => new Date(m.date) <= todayForCalculations);
+            // CORRECTED LOGIC: Find the last index where the milestone date is less than or equal to our simulation date.
+            const lastCompletedIndex = visibleMilestones.findLastIndex(m => new Date(m.date + "T00:00:00") <= todayForCalculations);
 
             let progressPercent = 0;
             if (lastCompletedIndex > -1 && totalVisible > 1) {
@@ -165,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             timelineEl.innerHTML = `<div id="timeline-progress-fill" style="height: ${progressPercent}%"></div>` + visibleMilestones
                 .map(m => {
-                    const milestoneDate = new Date(m.date);
+                    const milestoneDate = new Date(m.date + "T00:00:00");
                     const isCompleted = milestoneDate <= todayForCalculations;
                     
                     return `<div class="milestone" data-phase="${m.phase}"><div class="milestone-header" data-id="${m.id}"><div class="milestone-icon ${isCompleted ? 'completed' : 'future'}"><i class="fas fa-${isCompleted ? 'check' : 'hourglass-start'}"></i></div><div class="milestone-content"><div class="milestone-title">${m.title}</div><div class="milestone-date">${milestoneDate.toLocaleDateString('en-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</div></div></div><div class="milestone-details" id="details_${m.id}"><p>${m.details}</p></div></div>`;
