@@ -119,6 +119,7 @@ a {
     padding: 15px 20px;
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-medium);
+    transition: background 0.3s ease; /* Added transition for smooth color change */
 }
 
 .header-top-bar {
@@ -168,12 +169,12 @@ a {
 .navigation-menu {
     position: fixed;
     top: 0;
-    right: 0; /* <-- This anchors the menu to the RIGHT side */
+    right: 0;
     width: 300px;
     height: 100%;
     background: var(--card-bg);
     z-index: 1000;
-    transform: translateX(100%); /* <-- This moves the menu off-screen to the RIGHT */
+    transform: translateX(100%);
     transition: transform 0.3s ease-in-out;
     padding: 20px;
     box-shadow: var(--shadow-medium);
@@ -182,7 +183,7 @@ a {
 }
 
 .navigation-menu.is-open {
-    transform: translateX(0); /* This brings it back into view from the right */
+    transform: translateX(0);
 }
 
 .navigation-menu ul {
