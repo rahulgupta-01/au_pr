@@ -357,14 +357,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function renderTimeline(filter = 'all') {
             const timelineEl = document.getElementById('timeline');
-            const journeyStart = new Date('2025-02-15');
-            const journeyEnd = new Date('2028-04-15');
-            const totalJourneyDays = calcDays(journeyStart, journeyEnd);
-            const daysIntoJourney = calcDays(journeyStart, todayForCalculations);
-            const progressPercent = Math.min(100, Math.max(0, (daysIntoJourney / totalJourneyDays) * 100));
+            
+            // --- NEW UNIVERSAL LOGIC ---
+            // 1. Filter the milestones FIRST based on the active tab
+            const filteredMilestones = milestones.filter(m => filter === 'all' || m.phase === filter);
 
-            timelineEl.innerHTML = `<div id="timeline-progress-fill" style="height: ${progressPercent}%"></div>` + milestones
-                .filter(m => filter === 'all' || m.phase === filter)
+            // 2. Perform calculations on the FILTERED list
+            const totalMilestones = filteredMilestones.length;
+            const completedMilestones = filteredMilestones.filter(m => new Date(m.date) < todayForCalculations).length;
+            const progressPercent = totalMilestones > 0 ? (completedMilestones / totalMilestones) * 100 : 0;
+
+            // 3. Build the HTML from the FILTERED list
+            timelineEl.innerHTML = `<div id="timeline-progress-fill" style="height: ${progressPercent}%"></div>` + filteredMilestones
                 .map(m => {
                     const mDate = new Date(m.date);
                     const isCompleted = mDate < todayForCalculations;
@@ -382,6 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>`;
                 }).join('');
             
+            // Re-attach event listeners to the new elements
             document.querySelectorAll('.milestone-header').forEach(header => {
                 header.addEventListener('click', (e) => document.getElementById(`details_${e.currentTarget.dataset.id}`).classList.toggle('visible'));
             });
