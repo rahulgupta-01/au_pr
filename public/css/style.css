@@ -178,6 +178,7 @@ a {
     padding: 20px;
     box-shadow: var(--shadow-medium);
     padding-top: 70px;
+    overflow-y: auto;
 }
 
 .navigation-menu.is-open {
