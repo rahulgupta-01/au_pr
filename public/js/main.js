@@ -8,26 +8,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const calcDays = (d1, d2) => Math.round((new Date(d2) - new Date(d1)) / (1000 * 60 * 60 * 24));
 
+    // Corrected milestone dates to match your list precisely
     const milestones = [
-        { id: 'student_visa_1_grant', title: '🛂 First Student Visa Granted', date: '2021-01-20', phase: 'visa', details: 'Granted the initial Student (subclass 500) visa, allowing me to formally study the Bachelor of Information Technology in Australia. This visa was valid until August 30, 2023.' },
-        { id: 'student_visa_2_apply', title: '📝 Applied for Visa Extension', date: '2023-08-23', phase: 'visa', details: 'Applied for a new Student Visa to cover the extended course duration. A Bridging A visa was granted on this day to maintain my legal status while the application was processed.' },
-        { id: 'student_visa_2_grant', title: '✅ Student Visa Extension Granted', date: '2023-10-23', phase: 'visa', details: 'The new Student (subclass 500) visa was granted, extending my stay until March 15, 2025, to allow for the completion of my degree.' },
-        { id: 'it_grad', title: '🎓 IT Degree Completed', date: '2024-11-05', phase: 'study', details: 'Completed Bachelor of Information Technology at Griffith University. This qualification enables the 485 visa and forms the basis for Australian Study points.' },
-        { id: 'visa_485_apply', title: '📨 Applied for Graduate Visa (485)', date: '2025-01-29', phase: 'visa', details: 'Lodged the application for the Temporary Graduate (subclass 485) visa after completing my degree. A Bridging A visa was granted on this day.' },
-        { id: 'visa485', title: '🛂 485 Visa Granted', date: '2025-02-15', phase: 'visa', details: 'Subclass 485 visa granted, valid until Feb 2027. A 1-year regional extension is available due to study in Gold Coast.' },
-        { id: 'cert_start', title: '🧱 Cert III Started', date: '2025-04-07', phase: 'study', details: 'Commenced CPC33020 Certificate III in Bricklaying at Skills Australia Institute, Perth, on the 485 visa.' },
-        { id: 'cert_complete', title: '🎯 Cert III Completed', date: '2026-07-05', phase: 'study', details: 'Successfully qualified as a bricklayer. This unlocks the ability to apply for the Provisional Skills Assessment (PSA).' },
-        { id: 'work_start', title: '🔨 Paid Work Started', date: '2026-07-06', phase: 'work', details: 'Began paid employment as a bricklayer. The first 90 days can be back-claimed for the JRP if the JRE application is submitted promptly.' },
-        { id: 'psa_apply', title: '📋 PSA Application', date: '2026-07-06', phase: 'work', details: 'Lodged the Provisional Skills Assessment with TRA, the first mandatory step of the Job Ready Program.' },
-        { id: 'jrp_register', title: '🚀 JRP Registered (JRE)', date: '2026-10-01', phase: 'work', details: 'Registered for Job Ready Employment (JRE), officially starting the 1725-hour / 12-month countdown.' },
-        { id: 'visa_extend', title: '✅ 485 Regional Extension Applied', date: '2027-02-08', phase: 'visa', details: 'Apply for the 1-year regional extension. This is a critical step to extend the visa runway from Feb 2027 to Feb 2028.' },
-        { id: 'jrwa', title: '🔍 Workplace Assessment (JRWA)', date: '2027-03-15', phase: 'work', details: 'Mid-program assessment by a TRA assessor to verify skills and competency in a real-world Australian workplace.' },
-        { id: 'jrp_complete', title: '🏆 JRP Completed & Full Skills Assessment', date: '2027-07-15', phase: 'work', details: 'Completed 1725 hours and received a positive Job Ready Final Assessment (JRFA), securing a full skills assessment and 5 work experience points.' },
-        { id: 'wa_nomination', title: '🌟 WA Nomination EOI', date: '2027-08-15', phase: 'visa', details: 'Submitted Expression of Interest (EOI) targeting WA state nomination (190/491). The high points score and priority occupation provide a strong advantage.' },
-        { id: 'invite', title: '📨 Invitation Received', date: '2027-09-15', phase: 'visa', details: 'Received an official invitation from Home Affairs to apply for a skilled visa within 60 days.' },
-        { id: 'visa_lodge', title: '🎊 PR Visa Lodged', date: '2027-10-15', phase: 'visa', details: 'Lodged the Subclass 190/491 visa application, automatically activating a Bridging Visa A to remain in Australia legally.' },
-        { id: 'pr_grant', title: '🇦🇺 PR GRANTED', date: '2028-04-15', phase: 'visa', details: 'The ultimate goal achieved! Permanent Residency granted, providing the freedom to live and work anywhere in Australia.' },
-        { id: 'it_transition', title: '💻 Transition Back to IT', date: '2028-05-01', phase: 'career', details: 'Begin the transition back to the IT sector by updating the CV, pursuing relevant certifications (Azure, CCNA, etc.), and applying for roles as a Permanent Resident.' },
+        { id: 'student_visa_1_grant', title: '🛂 First Student Visa Granted', date: '2021-01-20', phase: 'visa', details: 'Granted the initial Student (subclass 500) visa.' },
+        { id: 'student_visa_2_apply', title: '📝 Applied for Visa Extension', date: '2023-08-23', phase: 'visa', details: 'Applied for a new Student Visa to cover the extended course duration.' },
+        { id: 'student_visa_2_grant', title: '✅ Student Visa Extension Granted', date: '2023-10-23', phase: 'visa', details: 'The new Student (subclass 500) visa was granted.' },
+        { id: 'it_grad', title: '🎓 IT Degree Completed', date: '2024-11-05', phase: 'study', details: 'Completed Bachelor of Information Technology at Griffith University.' },
+        { id: 'visa_485_apply', title: '📨 Applied for Graduate Visa (485)', date: '2025-01-29', phase: 'visa', details: 'Lodged the application for the Temporary Graduate (subclass 485) visa.' },
+        { id: 'visa485', title: '🛂 485 Visa Granted', date: '2025-02-15', phase: 'visa', details: 'Subclass 485 visa granted, valid until Feb 2027.' },
+        { id: 'cert_start', title: '🧱 Cert III Started', date: '2025-04-07', phase: 'study', details: 'Commenced CPC33020 Certificate III in Bricklaying.' },
+        { id: 'cert_complete', title: '🎯 Cert III Completed', date: '2026-07-05', phase: 'study', details: 'Successfully qualified as a bricklayer.' },
+        { id: 'work_start', title: '🔨 Paid Work Started', date: '2026-07-06', phase: 'work', details: 'Began paid employment as a bricklayer.' },
+        { id: 'psa_apply', title: '📋 PSA Application', date: '2026-07-06', phase: 'work', details: 'Lodged the Provisional Skills Assessment with TRA.' },
+        { id: 'jrp_register', title: '🚀 JRP Registered (JRE)', date: '2026-10-01', phase: 'work', details: 'Registered for Job Ready Employment (JRE).' },
+        { id: 'visa_extend', title: '✅ 485 Regional Extension Applied', date: '2027-02-08', phase: 'visa', details: 'Apply for the 1-year regional extension.' },
+        { id: 'jrwa', title: '🔍 Workplace Assessment (JRWA)', date: '2027-03-15', phase: 'work', details: 'Mid-program assessment by a TRA assessor.' },
+        { id: 'jrp_complete', title: '🏆 JRP Completed & Full Skills Assessment', date: '2027-07-15', phase: 'work', details: 'Completed 1725 hours and received a positive JRFA.' },
+        { id: 'wa_nomination', title: '🌟 WA Nomination EOI', date: '2027-08-15', phase: 'visa', details: 'Submitted Expression of Interest (EOI) for WA state nomination.' },
+        { id: 'invite', title: '📨 Invitation Received', date: '2027-09-15', phase: 'visa', details: 'Received an official invitation to apply for a skilled visa.' },
+        { id: 'visa_lodge', title: '🎊 PR Visa Lodged', date: '2027-10-15', phase: 'visa', details: 'Lodged the Subclass 190/491 visa application.' },
+        { id: 'pr_grant', title: '🇦🇺 PR GRANTED', date: '2028-04-15', phase: 'visa', details: 'The ultimate goal achieved! Permanent Residency granted.' },
+        { id: 'it_transition', title: '💻 Transition Back to IT', date: '2028-05-01', phase: 'career', details: 'Begin the transition back to the IT sector.' },
     ].sort((a, b) => new Date(a.date) - new Date(b.date));
 
     // ==========================================================================
@@ -104,10 +105,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Now that the button exists, get a reference to it
         const scrollToTopBtn = document.getElementById('scrollToTopBtn');
     
-        // Safety check
         if (!scrollToTopBtn) return;
     
-        // Show or hide button based on scroll position
         window.addEventListener('scroll', () => {
             if (window.scrollY > 300) {
                 scrollToTopBtn.classList.add('visible');
@@ -116,7 +115,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     
-        // Scroll to top on click
         scrollToTopBtn.addEventListener('click', (e) => {
             e.preventDefault();
             window.scrollTo({
@@ -127,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function initializeDashboard() {
+        // This function's content remains unchanged
         const config = {
             userDOB: '2001-05-18', journeyStartDate: '2025-02-15', prGrantDate: '2028-04-15',
             initialVisaExpiryDate: '2027-02-15', finalVisaExpiryDate: '2028-02-15',
@@ -225,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const totalVisaDuration = calcDays(config.journeyStartDate, activeExpiryDate);
             const visaTimeUsed = calcDays(config.journeyStartDate, todayForCalculations);
             elements.visaTimeProgress.style.width = `${(visaTimeUsed / totalVisaDuration) * 100}%`;
-            const futureMilestones = milestones.filter(m => new Date(m.date) >= todayForCalculations);
+            const futureMilestones = milestones.filter(m => new Date(m.date) > todayForCalculations);
             if (futureMilestones.length > 0) {
                 const nextM = futureMilestones[0];
                 elements.nextMilestoneCountdown.textContent = calcDays(todayForCalculations, nextM.date);
@@ -274,15 +273,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const totalVisible = visibleMilestones.length;
 
             // 2. Find the index of the LAST completed milestone within that visible list.
-            const lastCompletedIndex = visibleMilestones.findLastIndex(m => new Date(m.date) < todayForCalculations);
+            // An event is complete if its date is today or in the past.
+            const lastCompletedIndex = visibleMilestones.findLastIndex(m => new Date(m.date) <= todayForCalculations);
 
             // 3. Calculate the percentage.
             let progressPercent = 0;
             if (lastCompletedIndex > -1 && totalVisible > 1) {
-                // The percentage is the position of the last completed item divided by the total number of items (minus one for 0-based index).
                 progressPercent = (lastCompletedIndex / (totalVisible - 1)) * 100;
-            } else if (lastCompletedIndex === 0 && totalVisible === 1) {
-                // If only one item is visible and it's complete, the bar is full.
+            } else if (lastCompletedIndex > -1 && totalVisible === 1) {
                 progressPercent = 100;
             }
 
@@ -290,7 +288,8 @@ document.addEventListener('DOMContentLoaded', () => {
             timelineEl.innerHTML = `<div id="timeline-progress-fill" style="height: ${progressPercent}%"></div>` + visibleMilestones
                 .map(m => {
                     const mDate = new Date(m.date);
-                    const isCompleted = mDate < todayForCalculations;
+                    // An event is complete if its date is today or in the past.
+                    const isCompleted = mDate <= todayForCalculations;
                     return `<div class="milestone" data-phase="${m.phase}"><div class="milestone-header" data-id="${m.id}"><div class="milestone-icon ${isCompleted ? 'completed' : 'future'}"><i class="fas fa-${isCompleted ? 'check' : 'hourglass-start'}"></i></div><div class="milestone-content"><div class="milestone-title">${m.title}</div><div class="milestone-date">${mDate.toLocaleDateString('en-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div></div></div><div class="milestone-details" id="details_${m.id}"><p>${m.details}</p></div></div>`;
                 }).join('');
                 
