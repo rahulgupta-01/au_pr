@@ -264,21 +264,36 @@ document.addEventListener('DOMContentLoaded', () => {
         state = loadState(); renderPoints(); renderCosts(); updateMetrics(); updateAlerts(); initializeResetButtons();
     }
     
+    // THIS IS THE UPDATED FUNCTION
     function initializeTimeline() {
         function renderTimeline(filter = 'all') {
             const timelineEl = document.getElementById('timeline');
-            const journeyStart = new Date('2025-02-15');
-            const journeyEnd = new Date('2028-04-15');
-            const totalJourneyDays = calcDays(journeyStart, journeyEnd);
-            const daysIntoJourney = calcDays(journeyStart, todayForCalculations);
-            const progressPercent = Math.min(100, Math.max(0, (daysIntoJourney / totalJourneyDays) * 100));
-            timelineEl.innerHTML = `<div id="timeline-progress-fill" style="height: ${progressPercent}%"></div>` + milestones
-                .filter(m => filter === 'all' || m.phase === filter)
+
+            // 1. Get the milestones that are currently visible based on the filter.
+            const visibleMilestones = milestones.filter(m => filter === 'all' || m.phase === filter);
+            const totalVisible = visibleMilestones.length;
+
+            // 2. Find the index of the LAST completed milestone within that visible list.
+            const lastCompletedIndex = visibleMilestones.findLastIndex(m => new Date(m.date) < todayForCalculations);
+
+            // 3. Calculate the percentage.
+            let progressPercent = 0;
+            if (lastCompletedIndex > -1 && totalVisible > 1) {
+                // The percentage is the position of the last completed item divided by the total number of items (minus one for 0-based index).
+                progressPercent = (lastCompletedIndex / (totalVisible - 1)) * 100;
+            } else if (lastCompletedIndex === 0 && totalVisible === 1) {
+                // If only one item is visible and it's complete, the bar is full.
+                progressPercent = 100;
+            }
+
+            // 4. Build the HTML using the new progressPercent and the filtered `visibleMilestones` array.
+            timelineEl.innerHTML = `<div id="timeline-progress-fill" style="height: ${progressPercent}%"></div>` + visibleMilestones
                 .map(m => {
                     const mDate = new Date(m.date);
                     const isCompleted = mDate < todayForCalculations;
                     return `<div class="milestone" data-phase="${m.phase}"><div class="milestone-header" data-id="${m.id}"><div class="milestone-icon ${isCompleted ? 'completed' : 'future'}"><i class="fas fa-${isCompleted ? 'check' : 'hourglass-start'}"></i></div><div class="milestone-content"><div class="milestone-title">${m.title}</div><div class="milestone-date">${mDate.toLocaleDateString('en-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div></div></div><div class="milestone-details" id="details_${m.id}"><p>${m.details}</p></div></div>`;
                 }).join('');
+                
             document.querySelectorAll('.milestone-header').forEach(header => {
                 header.addEventListener('click', (e) => {
                     const detailsEl = document.getElementById(`details_${e.currentTarget.dataset.id}`);
