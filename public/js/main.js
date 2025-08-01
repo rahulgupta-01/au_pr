@@ -4,21 +4,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. GLOBAL DATA & HELPERS
     // ==========================================================================
 
-    // !! THIS IS THE MOST IMPORTANT PART OF THE FIX !!
-    // We establish ONE single date for the entire website's logic.
-    // To see how the site looks on a different day, just change this one line.
-    const SIMULATION_DATE_STRING = '2025-08-01';
+    // THIS IS THE DEFINITIVE FIX:
+    // We use the real-world date from the user's browser. No more simulations.
+    const todayForCalculations = new Date();
+    todayForCalculations.setHours(0, 0, 0, 0); // Set to midnight for accurate day-to-day comparison
 
-    // This is the reference "today" used by ALL logic (progress bar, metrics, etc.).
-    // It's set to the beginning of the simulation day in the browser's local timezone.
-    const todayForCalculations = new Date(SIMULATION_DATE_STRING + 'T00:00:00');
-
-    // This is used by the live clock to make it "tick".
-    const pageLoadTime = new Date();
-    const simulationStartTime = new Date(SIMULATION_DATE_STRING + 'T15:30:00');
-
-
-    const calcDays = (d1, d2) => Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
+    const calcDays = (d1, d2) => Math.round((new Date(d2) - new Date(d1)) / (1000 * 60 * 60 * 24));
 
     const milestones = [
         { id: 'student_visa_1_grant', title: '🛂 First Student Visa Granted', date: '2021-01-20', phase: 'visa', details: 'Granted the initial Student (subclass 500) visa.' },
@@ -95,8 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const clockDateEl = document.getElementById('currentDate');
         const clockTimeEl = document.getElementById('currentTime');
         if (clockDateEl && clockTimeEl) {
-            const elapsed = new Date() - pageLoadTime;
-            const now = new Date(simulationStartTime.getTime() + elapsed);
+            const now = new Date(); // Use the real current time
             
             const options = { timeZone: 'Australia/Perth' };
             clockDateEl.textContent = now.toLocaleDateString('en-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', ...options });
@@ -135,8 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const visibleMilestones = milestones.filter(m => filter === 'all' || m.phase === filter);
             const totalVisible = visibleMilestones.length;
 
-            // CORRECTED LOGIC: Find the last index where the milestone date is less than or equal to our simulation date.
-            const lastCompletedIndex = visibleMilestones.findLastIndex(m => new Date(m.date + "T00:00:00") <= todayForCalculations);
+            // CORRECTED LOGIC: Find the last index where the milestone date is less than or equal to our real-world date.
+            const lastCompletedIndex = visibleMilestones.findLastIndex(m => new Date(m.date) <= todayForCalculations);
 
             let progressPercent = 0;
             if (lastCompletedIndex > -1 && totalVisible > 1) {
@@ -147,10 +137,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             timelineEl.innerHTML = `<div id="timeline-progress-fill" style="height: ${progressPercent}%"></div>` + visibleMilestones
                 .map(m => {
-                    const milestoneDate = new Date(m.date + "T00:00:00");
+                    const milestoneDate = new Date(m.date);
                     const isCompleted = milestoneDate <= todayForCalculations;
                     
-                    return `<div class="milestone" data-phase="${m.phase}"><div class="milestone-header" data-id="${m.id}"><div class="milestone-icon ${isCompleted ? 'completed' : 'future'}"><i class="fas fa-${isCompleted ? 'check' : 'hourglass-start'}"></i></div><div class="milestone-content"><div class="milestone-title">${m.title}</div><div class="milestone-date">${milestoneDate.toLocaleDateString('en-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</div></div></div><div class="milestone-details" id="details_${m.id}"><p>${m.details}</p></div></div>`;
+                    // Use a non-UTC date for display to show the correct local day
+                    const displayDate = new Date(m.date + 'T00:00:00'); 
+
+                    return `<div class="milestone" data-phase="${m.phase}"><div class="milestone-header" data-id="${m.id}"><div class="milestone-icon ${isCompleted ? 'completed' : 'future'}"><i class="fas fa-${isCompleted ? 'check' : 'hourglass-start'}"></i></div><div class="milestone-content"><div class="milestone-title">${m.title}</div><div class="milestone-date">${displayDate.toLocaleDateString('en-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</div></div></div><div class="milestone-details" id="details_${m.id}"><p>${m.details}</p></div></div>`;
                 }).join('');
                 
             document.querySelectorAll('.milestone-header').forEach(header => {
