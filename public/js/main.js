@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const calcDays = (d1, d2) => Math.round((new Date(d2) - new Date(d1)) / (1000 * 60 * 60 * 24));
 
-    // Restored longer, more detailed milestone descriptions
     const milestones = [
         { id: 'student_visa_1_grant', title: '🛂 First Student Visa Granted', date: '2021-01-20', phase: 'visa', details: 'Granted the initial Student (subclass 500) visa, allowing me to formally study the Bachelor of Information Technology in Australia. This visa was valid until August 30, 2023.' },
         { id: 'student_visa_2_apply', title: '📝 Applied for Visa Extension', date: '2023-08-23', phase: 'visa', details: 'Applied for a new Student Visa to cover the extended course duration. A Bridging A visa was granted on this day to maintain my legal status while the application was processed.' },
@@ -113,7 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Restored the full dashboard implementation
     function initializeDashboard() {
         const config = {
             userDOB: '2001-05-18', journeyStartDate: '2025-02-15', prGrantDate: '2028-04-15',
@@ -259,12 +257,16 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const visibleMilestones = milestones.filter(m => filter === 'all' || m.phase === filter);
             
-            // Reverted progress bar to date-based logic across the entire journey
-            const journeyStart = new Date('2021-01-20T00:00:00');
-            const journeyEnd = new Date('2028-04-15T00:00:00');
-            const totalJourneyDays = calcDays(journeyStart, journeyEnd);
-            const daysIntoJourney = calcDays(journeyStart, todayForCalculations);
-            const progressPercent = Math.min(100, Math.max(0, (daysIntoJourney / totalJourneyDays) * 100));
+            // Reverted to milestone-based progress calculation
+            const lastCompletedIndex = visibleMilestones.findLastIndex(m => {
+                const milestoneDate = new Date(m.date + "T00:00:00");
+                return milestoneDate <= todayForCalculations;
+            });
+
+            let progressPercent = 0;
+            if (lastCompletedIndex >= 0) {
+                progressPercent = ((lastCompletedIndex + 1) / visibleMilestones.length) * 100;
+            }
 
             timelineEl.innerHTML = `<div id="timeline-progress-fill" style="height: ${progressPercent}%"></div>` + visibleMilestones
                 .map(m => {
