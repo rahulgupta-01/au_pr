@@ -3,15 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🇦🇺 Australian PR Journey | Home</title>
-
+    <title>🇦🇺 Australian PR Journey | Documents Hub</title>
     <link rel="icon" href="/assets/favicon-48x48.ico" sizes="any">
     <link rel="shortcut icon" href="/assets/favicon-48x48.ico">
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/assets/android-chrome-192x192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="/assets/android-chrome-512x512.png">
     <link rel="manifest" href="/assets/site.webmanifest">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -19,40 +16,7 @@
 </head>
 <body>
     <div class="container">
-        <header class="header">
-            <div class="header-top-bar">
-                <button class="hamburger-menu" id="hamburger-menu" aria-label="Open Menu">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <h1>Documents Hub</h1>
-                <div class="header-placeholder"></div>
-            </div>
-            <div class="date-time-container">
-                <span id="currentDate"></span>
-                <span id="currentTime"></span>
-            </div>
-            <nav class="navigation-menu" id="navigation-menu">
-                <button class="close-menu" id="close-menu" aria-label="Close Menu">×</button>
-                <ul>
-                    <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
-                    <li><a href="about.html"><i class="fas fa-user"></i> About Me</a></li>
-                    <li><a href="plan.html"><i class="fas fa-route"></i> My PR Plan</a></li>
-                    <li><a href="visa.html"><i class="fas fa-passport"></i> Visa Background</a></li>
-                    <li><a href="documents.html" class="active"><i class="fas fa-folder-open"></i> Documents Hub</a></li>
-                    <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
-                    <li class="theme-switch-container">
-                        <div class="theme-switch-wrapper">
-                            <i class="fas fa-sun"></i>
-                            <label class="theme-switch" for="dark-mode-toggle">
-                                <input type="checkbox" id="dark-mode-toggle" />
-                                <span class="slider"></span>
-                            </label>
-                            <i class="fas fa-moon"></i>
-                        </div>
-                    </li>
-                </ul>
-            </nav>
-        </header>
+        <div id="header-placeholder" data-title="Documents Hub"></div>
 
         <div class="main-content">
             <div class="card">
@@ -103,6 +67,7 @@
         </div>
     </div>
     <div class="overlay" id="overlay"></div>
+    <div id="footer-placeholder"></div>
     <script src="js/main.js"></script>
 </body>
 </html>
