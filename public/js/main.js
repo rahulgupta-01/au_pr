@@ -3,9 +3,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================================================
     // 1. GLOBAL DATA & HELPERS
     // ==========================================================================
-    // This creates a clean "today" date at midnight UTC for reliable comparisons.
-    const today = new Date();
-    const todayForCalculations = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+
+    // THIS IS THE FIX: We define a single date for the entire simulation.
+    // All logic will be based on this date, not the real-world current date.
+    const simulationDate = new Date('2025-08-01T15:30:00'); // August 1, 2025
+
+    const todayForCalculations = new Date(simulationDate);
+    todayForCalculations.setHours(0, 0, 0, 0);
 
     const calcDays = (d1, d2) => Math.round((new Date(d2) - new Date(d1)) / (1000 * 60 * 60 * 24));
 
@@ -84,7 +88,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const clockDateEl = document.getElementById('currentDate');
         const clockTimeEl = document.getElementById('currentTime');
         if (clockDateEl && clockTimeEl) {
-            const now = new Date();
+            // This makes the clock "tick" forward from the simulation start time
+            const now = new Date(simulationDate.getTime() + (new Date() - new Date(simulationDate.getTime())));
+            
             const options = { timeZone: 'Australia/Perth' };
             clockDateEl.textContent = now.toLocaleDateString('en-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', ...options });
             clockTimeEl.textContent = now.toLocaleTimeString('en-AU', { hour12: true, hour: 'numeric', minute: '2-digit', second: '2-digit', ...options }).toLowerCase() + ' AWST';
@@ -113,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function initializeDashboard() {
-        // This function's content remains unchanged
+        // This function's content remains unchanged and uses the correct `todayForCalculations`
         const config = { userDOB: '2001-05-18', journeyStartDate: '2025-02-15', prGrantDate: '2028-04-15', initialVisaExpiryDate: '2027-02-15', finalVisaExpiryDate: '2028-02-15' };
         const costData = [
             { id: 'cert', label: 'Certificate III Course', amount: 17230, paid: true }, { id: 'tools', label: 'Tools, PPE, White Card', amount: 550, paid: true }, { id: 'tra', label: 'TRA Assessments (All)', amount: 3540, paid: false }, { id: 'visa_app', label: 'Visa Application Fee', amount: 4910, paid: false }, { id: 'medicals', label: 'Medicals & Police Checks', amount: 900, paid: false }, { id: 'english_test', label: 'English Test', amount: 400, paid: false }, { id: 'naati_test', label: 'NAATI CCL Test', amount: 220, paid: false },
@@ -128,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const savedState = localStorage.getItem('prDashboardState');
             if (savedState) return JSON.parse(savedState);
             const defaultState = { points: {}, costs: {} };
-            getPointsData().forEach(p => { defaultState.points[p.id] = p.initial || (p.achievedDate && new Date(p.achievedDate) <= new Date()); });
+            getPointsData().forEach(p => { defaultState.points[p.id] = p.initial || (p.achievedDate && new Date(p.achievedDate) <= todayForCalculations); });
             costData.forEach(c => defaultState.costs[c.id] = c.paid);
             return defaultState;
         }
@@ -142,19 +148,13 @@ document.addEventListener('DOMContentLoaded', () => {
         state = loadState(); renderPoints(); renderCosts(); updateMetrics(); updateAlerts(); initializeResetButtons();
     }
     
-    // THIS IS THE CORRECTED FUNCTION
     function initializeTimeline() {
         function renderTimeline(filter = 'all') {
             const timelineEl = document.getElementById('timeline');
             const visibleMilestones = milestones.filter(m => filter === 'all' || m.phase === filter);
             const totalVisible = visibleMilestones.length;
 
-            // CORRECTED LOGIC: Find the last index where the milestone date (in UTC) is less than or equal to today's date (in UTC).
-            const lastCompletedIndex = visibleMilestones.findLastIndex(m => {
-                // Create a reliable UTC date from the string 'YYYY-MM-DD'
-                const milestoneDate = new Date(m.date + 'T00:00:00Z');
-                return milestoneDate <= todayForCalculations;
-            });
+            const lastCompletedIndex = visibleMilestones.findLastIndex(m => new Date(m.date) <= todayForCalculations);
 
             let progressPercent = 0;
             if (lastCompletedIndex > -1 && totalVisible > 1) {
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             timelineEl.innerHTML = `<div id="timeline-progress-fill" style="height: ${progressPercent}%"></div>` + visibleMilestones
                 .map(m => {
-                    const milestoneDate = new Date(m.date + 'T00:00:00Z');
+                    const milestoneDate = new Date(m.date);
                     const isCompleted = milestoneDate <= todayForCalculations;
                     
                     return `<div class="milestone" data-phase="${m.phase}"><div class="milestone-header" data-id="${m.id}"><div class="milestone-icon ${isCompleted ? 'completed' : 'future'}"><i class="fas fa-${isCompleted ? 'check' : 'hourglass-start'}"></i></div><div class="milestone-content"><div class="milestone-title">${m.title}</div><div class="milestone-date">${milestoneDate.toLocaleDateString('en-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</div></div></div><div class="milestone-details" id="details_${m.id}"><p>${m.details}</p></div></div>`;
