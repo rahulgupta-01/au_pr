@@ -1061,7 +1061,7 @@ body.dark-mode a {
 }
 
 body.dark-mode .header {
-    background: var(--card-bg);
+    background: #002a4e;
 }
 
 body.dark-mode .header-home-link {
