@@ -1,5 +1,3 @@
-# This workflow builds and deploys a preview of your Vite project
-
 name: Deploy to Firebase Hosting on PR
 
 on: pull_request
@@ -22,13 +20,14 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Set Node Options
+        run: echo "NODE_OPTIONS=--openssl-legacy-provider" >> $GITHUB_ENV
+
       - name: Install Dependencies
         run: npm install
 
       - name: Build Project
         run: npm run build
-        env:
-          NODE_OPTIONS: --openssl-legacy-provider
 
       - name: Deploy to Firebase Preview Channel
         uses: FirebaseExtended/action-hosting-deploy@v0

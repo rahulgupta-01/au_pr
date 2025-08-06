@@ -15,16 +15,19 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18' # Back to Node 18, which Vite requires
+          node-version: '18'
+
+      # --- THIS IS THE NEW STEP ---
+      # This sets the required Node.js option for the entire job
+      - name: Set Node Options
+        run: echo "NODE_OPTIONS=--openssl-legacy-provider" >> $GITHUB_ENV
 
       - name: Install Dependencies
         run: npm install
 
       - name: Build Project
-        # This runs the build command with the special option to fix the crypto error
+        # The env block is no longer needed here
         run: npm run build
-        env:
-          NODE_OPTIONS: --openssl-legacy-provider
 
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
