@@ -209,6 +209,8 @@ a:hover {
     line-height: 1;
     border-radius: 50%;
     transition: background-color var(--transition-speed) ease;
+    /* --- FIX: Remove default browser outline on tap/click --- */
+    outline: none;
 }
 
 .header a:hover {
@@ -216,9 +218,18 @@ a:hover {
     text-decoration: none;
 }
 
-.header-home-link:hover,
-.hamburger-menu:hover {
+/* --- FIX: Style for active tap state on ALL devices --- */
+.header-home-link:active,
+.hamburger-menu:active {
     background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* --- FIX: Apply hover styles ONLY on devices that can hover --- */
+@media (hover: hover) {
+    .header-home-link:hover,
+    .hamburger-menu:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
 }
 
 .date-time-container {
@@ -303,6 +314,8 @@ a:hover {
     top: 1rem; /* 16px */
     right: 1.25rem; /* 20px */
     z-index: 1001;
+    /* --- FIX: Remove default browser outline on tap/click --- */
+    outline: none;
 }
 
 /* Dark Mode Theme Toggle */
