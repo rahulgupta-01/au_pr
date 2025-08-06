@@ -1,0 +1,21 @@
+{
+  "name": "brickie",
+  "version": "1.0.0",
+  "description": "A personal dashboard for tracking Australian PR progress.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "keywords": [
+    "firebase",
+    "vite",
+    "pr-journey"
+  ],
+  "author": "Rahul Gupta",
+  "license": "ISC",
+  "devDependencies": {
+    "vite": "^7.0.6",
+    "vite-plugin-handlebars": "^2.0.0"
+  }
+}

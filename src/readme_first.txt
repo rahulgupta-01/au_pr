@@ -1,35 +1,43 @@
 ╔════════════════════════════════════════════════════════════════════╗
-║                      🔧 BEFORE STARTING WORK                       ║
+║                   🚀 STARTING DEVELOPMENT                          ║
 ╚════════════════════════════════════════════════════════════════════╝
 
-        1. Open Command Prompt
-
-        2. Navigate to your project folder:
+        1. Open Command Prompt in your project folder:
 cd C:\brickie
 
-        3. Pull latest changes from GitHub:
+        2. Pull latest changes from GitHub:
 git pull origin main
 
-        4. Check Git status (should say "up to date"):
-git status
+        3. Install any new dependencies (good practice):
+npm install
 
+        4. Start the local development server:
+npm run dev
+
+  ✅ Your site is now running at http://localhost:5173/
   ✅ Ready to work!
 
 
 ╔════════════════════════════════════════════════════════════════════╗
-║                      📦 AFTER FINISHING WORK                       ║
+║                   📦 DEPLOYING YOUR CHANGES                         ║
 ╚════════════════════════════════════════════════════════════════════╝
 
-        1. Deploy to Firebase:
+You now have two ways to deploy your site:
+
+
+        1. Build the final website:
+npm run build
+
+        2. Deploy the built site to Firebase:
 firebase deploy
 
-        2. Stage all changes:
+        3. Stage all your changes:
 git add .
 
-        3. Commit your changes:
+        4. Commit your changes:
 git commit -m "New Changes"
 
-        4. Push to GitHub:
+        5. Push to GitHub (this will trigger the automatic deployment):
 git push origin main
 
 
@@ -41,9 +49,7 @@ https://brickie28.web.app
 
 
 ╔════════════════════════════════════════════════════════════════════╗
-║                      🚀 CHECK DEPLOYMENTS                         ║
+║                  🤖 VIEW AUTOMATIC DEPLOYMENTS                   ║
 ╚════════════════════════════════════════════════════════════════════╝
 
 https://github.com/rahulgupta-01/au_pr/actions
-
-

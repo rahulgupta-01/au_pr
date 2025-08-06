@@ -7,6 +7,12 @@ yarn-error.log*
 firebase-debug.log*
 firebase-debug.*.log*
 
+# ==================================
+# --- ADDED FOR VITE BUILD PROCESS ---
+# Build output folder
+/dist
+# ==================================
+
 # Firebase cache
 .firebase/
 
@@ -62,8 +68,17 @@ node_modules/
 # Yarn Integrity file
 .yarn-integrity
 
+# =======================================================
+# --- ADDED: Environment variables & Editor config ---
 # dotenv environment variables file
 .env
+.env.*
+!.env.example
+
+# IDE / Editor configuration folders
+.vscode/
+.idea/
+# =======================================================
 
 # dataconnect generated files
 .dataconnect
