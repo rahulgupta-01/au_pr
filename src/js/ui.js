@@ -101,6 +101,9 @@ function initializeTheme() {
  * Creates and manages the "scroll to top" button.
  */
 function initializeScrollToTop() {
+    // Check if the button already exists to prevent duplicates on router navigation
+    if (document.getElementById('scrollToTopBtn')) return;
+    
     const buttonHTML = `<a href="#" id="scrollToTopBtn" class="scroll-to-top-btn" title="Go to top"><i class="fas fa-chevron-up"></i></a>`;
     document.body.insertAdjacentHTML('beforeend', buttonHTML);
     const scrollToTopBtn = document.getElementById('scrollToTopBtn');
@@ -147,12 +150,46 @@ function initializeContactPage() {
 }
 
 /**
+ * Initializes tooltips to be toggleable on click/tap for mobile devices,
+ * while retaining hover functionality for desktops.
+ */
+function initializeTooltips() {
+    const tooltipWrappers = document.querySelectorAll('.tooltip-wrapper');
+
+    // Close all tooltips when clicking anywhere else on the page
+    document.addEventListener('click', () => {
+        tooltipWrappers.forEach(wrapper => wrapper.classList.remove('is-active'));
+    });
+
+    tooltipWrappers.forEach(wrapper => {
+        wrapper.addEventListener('click', (e) => {
+            // --- FIX: Stop the label from toggling the checkbox ---
+            e.preventDefault(); 
+            e.stopPropagation();
+
+            const wasActive = wrapper.classList.contains('is-active');
+            
+            // First, close all other tooltips
+            tooltipWrappers.forEach(t => t.classList.remove('is-active'));
+
+            // If the clicked tooltip was not already active, activate it.
+            if (!wasActive) {
+                wrapper.classList.add('is-active');
+            }
+        });
+    });
+}
+
+
+/**
  * The main UI initialization function. This should be called once when the app starts.
  */
 export function initializeUI() {
     initializeHeader();
     initializeTheme();
     initializeScrollToTop();
+    initializeTooltips(); // This will now correctly initialize tooltips on every page load
+
     // Initialize the clock if the element exists on the page.
     if (document.getElementById('currentDate')) {
         updateClock();
