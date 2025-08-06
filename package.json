@@ -17,6 +17,6 @@
   "license": "ISC",
   "devDependencies": {
     "vite": "^7.0.6",
-    "vite-plugin-handlebars": "^3.2.2"
+    "vite-plugin-handlebars": "^2.0.0"
   }
 }
