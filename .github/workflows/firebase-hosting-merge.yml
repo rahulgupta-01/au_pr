@@ -1,35 +1,32 @@
-# This workflow builds and deploys your Vite project to Firebase Hosting
-
 name: Deploy to Firebase Hosting on merge
 
 on:
   push:
     branches:
-      - main # This runs whenever you push to the 'main' branch
+      - main
 
 jobs:
   build_and_deploy:
-    runs-on: ubuntu-latest # Uses a standard virtual machine
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
       - name: Setup Node.js
-        # This step sets up the Node.js environment needed to build your project
         uses: actions/setup-node@v3
         with:
-          node-version: '16' # CHANGED: Switched to a stable LTS version
+          node-version: '18' # Back to Node 18, which Vite requires
 
       - name: Install Dependencies
-        # This runs 'npm install' to get Vite and other packages
         run: npm install
 
       - name: Build Project
-        # This runs 'npm run build' to create the final 'dist' folder
+        # This runs the build command with the special option to fix the crypto error
         run: npm run build
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
 
       - name: Deploy to Firebase
-        # This step will now run after a successful build
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}

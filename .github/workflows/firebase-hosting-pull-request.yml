@@ -20,13 +20,15 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16' # CHANGED: Switched to a stable LTS version
+          node-version: '18'
 
       - name: Install Dependencies
         run: npm install
 
       - name: Build Project
         run: npm run build
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
 
       - name: Deploy to Firebase Preview Channel
         uses: FirebaseExtended/action-hosting-deploy@v0
