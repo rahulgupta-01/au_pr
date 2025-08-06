@@ -21,7 +21,7 @@ jobs:
         run: npm install
 
       - name: Build Project
-        run: NODE_OPTIONS=--openssl-legacy-provider npm run build
+        run: npm run build
 
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
