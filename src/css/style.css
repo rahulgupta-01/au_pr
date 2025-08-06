@@ -2,7 +2,7 @@
    TABLE OF CONTENTS
    ==========================================================================
    1.  Root Variables & Global Styles
-   2.  Accessibility Enhancements
+   2.  Accessibility Enhancements & Tooltips
    3.  Layout (Container, Card, Grid)
    4.  Header & Navigation
    5.  Components (Metrics, Calculators, Alerts, Buttons, etc.)
@@ -83,7 +83,11 @@ a:hover {
     border-radius: 4px;
 }
 
-/* Original Tooltip Styles */
+/* --- FIX: Wrapper to handle JS click events separately from label --- */
+.tooltip-wrapper {
+    display: inline-block;
+}
+
 .tooltip {
     position: relative;
     display: inline-block;
@@ -110,12 +114,24 @@ a:hover {
     font-size: 0.9rem;
     line-height: 1.5;
     font-weight: 400;
+    pointer-events: none;
 }
 
-.tooltip:hover .tooltiptext {
+/* Show tooltip on desktop hover OR when active class is added by JS */
+.tooltip-wrapper:hover .tooltiptext,
+.tooltip-wrapper.is-active .tooltiptext {
     visibility: visible;
     opacity: 1;
+    pointer-events: auto;
 }
+
+/* On devices that CANNOT hover (i.e., mobile), change the cursor */
+@media (hover: none) {
+    .tooltip {
+        cursor: pointer;
+    }
+}
+
 
 /* ==========================================================================
    3. Layout (Container, Card, Grid)
@@ -209,7 +225,6 @@ a:hover {
     line-height: 1;
     border-radius: 50%;
     transition: background-color var(--transition-speed) ease;
-    /* --- FIX: Remove default browser outline on tap/click --- */
     outline: none;
 }
 
@@ -218,13 +233,11 @@ a:hover {
     text-decoration: none;
 }
 
-/* --- FIX: Style for active tap state on ALL devices --- */
 .header-home-link:active,
 .hamburger-menu:active {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* --- FIX: Apply hover styles ONLY on devices that can hover --- */
 @media (hover: hover) {
     .header-home-link:hover,
     .hamburger-menu:hover {
@@ -279,7 +292,7 @@ a:hover {
     align-items: center;
     gap: 1rem; /* 16px */
     padding: 1rem; /* 16px */
-    color: var(--text-dark); /* Changed from --text-medium for better contrast */
+    color: var(--text-dark);
     font-weight: 500;
     border-radius: var(--border-radius-md);
     font-size: 1.1rem;
@@ -314,7 +327,6 @@ a:hover {
     top: 1rem; /* 16px */
     right: 1.25rem; /* 20px */
     z-index: 1001;
-    /* --- FIX: Remove default browser outline on tap/click --- */
     outline: none;
 }
 
