@@ -18,7 +18,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          # Use the active Long-Term Support version of Node.js
+          node-version: '22'
 
       - name: Install Dependencies
         run: npm install
