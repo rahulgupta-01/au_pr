@@ -66,7 +66,7 @@ export function initializeDashboard(milestones, costData) {
             const displayPoints = isChecked ? p.points : (p.currentPoints || 0);
             currentTotal += displayPoints;
             // This line has been reverted to the original tooltip structure
-            return `<div class="points-item"><input type="checkbox" class="interactive-checkbox" id="check_${p.id}" data-id="${p.id}" ${isChecked ? 'checked' : ''} ${isAchievedByDate ? 'disabled' : ''}><label for="check_${p.id}" class="item-label">${p.label} <span class="tooltip">(i)<span class="tooltiptext">${p.tooltip}</span></span></label><span class="points-value ${isChecked ? 'points-achieved' : 'points-pending'}">${displayPoints}</span></div>`;
+            return `<div class="points-item"><input type="checkbox" class="interactive-checkbox" id="check_${p.id}" data-id="${p.id}" ${isChecked ? 'checked' : ''} ${isAchievedByDate ? 'disabled' : ''}><label for="check_${p.id}" class="item-label">${p.label} <span class="tooltip-wrapper"><span class="tooltip">(i)<span class="tooltiptext">${p.tooltip}</span></span></span></label><span class="points-value ${isChecked ? 'points-achieved' : 'points-pending'}">${displayPoints}</span></div>`;
         }).join('');
         elements.currentTotalPoints.textContent = currentTotal;
         elements.currentPoints.textContent = currentTotal;
