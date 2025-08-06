@@ -20,14 +20,11 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Set Node Options
-        run: echo "NODE_OPTIONS=--openssl-legacy-provider" >> $GITHUB_ENV
-
       - name: Install Dependencies
         run: npm install
 
       - name: Build Project
-        run: npm run build
+        run: NODE_OPTIONS=--openssl-legacy-provider npm run build
 
       - name: Deploy to Firebase Preview Channel
         uses: FirebaseExtended/action-hosting-deploy@v0

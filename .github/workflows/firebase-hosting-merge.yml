@@ -17,17 +17,11 @@ jobs:
         with:
           node-version: '18'
 
-      # --- THIS IS THE NEW STEP ---
-      # This sets the required Node.js option for the entire job
-      - name: Set Node Options
-        run: echo "NODE_OPTIONS=--openssl-legacy-provider" >> $GITHUB_ENV
-
       - name: Install Dependencies
         run: npm install
 
       - name: Build Project
-        # The env block is no longer needed here
-        run: npm run build
+        run: NODE_OPTIONS=--openssl-legacy-provider npm run build
 
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
