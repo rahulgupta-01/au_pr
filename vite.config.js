@@ -3,6 +3,8 @@ import handlebars from 'vite-plugin-handlebars';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { readdirSync } from 'fs';
+// 1. Import the new plugin
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 // Modern, reliable way to get the directory path
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -22,6 +24,15 @@ export default defineConfig({
     handlebars({
       partialDirectory: resolve(__dirname, 'src', '_partials'),
     }),
+    // 2. Add and configure the plugin
+    viteStaticCopy({
+      targets: [
+        {
+          src: 'data', // Path to the folder in 'src'
+          dest: '.'    // Destination in the 'dist' folder ('.' means the root)
+        }
+      ]
+    })
   ],
   build: {
     outDir: '../dist',

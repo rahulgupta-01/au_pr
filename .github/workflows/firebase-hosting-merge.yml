@@ -16,7 +16,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           # Use the active Long-Term Support version of Node.js
-          node-version: '22'
+          node-version: 'lts/*'
 
       - name: Install Dependencies
         run: npm install
