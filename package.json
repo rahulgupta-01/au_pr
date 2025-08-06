@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A personal dashboard for tracking Australian PR progress.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build"
@@ -16,6 +17,6 @@
   "license": "ISC",
   "devDependencies": {
     "vite": "^7.0.6",
-    "vite-plugin-handlebars": "^2.0.0"
+    "vite-plugin-handlebars": "^3.2.2"
   }
 }
