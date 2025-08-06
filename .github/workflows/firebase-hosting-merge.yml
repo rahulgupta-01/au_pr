@@ -18,7 +18,7 @@ jobs:
         # This step sets up the Node.js environment needed to build your project
         uses: actions/setup-node@v3
         with:
-          node-version: '18' # Use a Long-Term Support version of Node
+          node-version: '16' # CHANGED: Switched to a stable LTS version
 
       - name: Install Dependencies
         # This runs 'npm install' to get Vite and other packages
@@ -29,7 +29,7 @@ jobs:
         run: npm run build
 
       - name: Deploy to Firebase
-        # This step is the same as before, but now it will find the 'dist' folder
+        # This step will now run after a successful build
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
