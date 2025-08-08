@@ -150,66 +150,62 @@ function initializeContactPage() {
 }
 
 /**
- * --- DEFINITIVE TOOLTIP FIX ---
- * Initializes tooltips using JavaScript for perfect positioning.
+ * --- FINAL TOOLTIP FIX ---
+ * Initializes tooltips using JavaScript for perfect positioning and reliable clicks.
  */
 function initializeTooltips() {
+    const allTooltipWrappers = document.querySelectorAll('.tooltip-wrapper');
+
     const hideAllTooltips = () => {
-        document.querySelectorAll('.tooltiptext.is-active').forEach(tooltip => {
-            tooltip.classList.remove('is-active');
+        allTooltipWrappers.forEach(wrapper => {
+            const tooltipText = wrapper.querySelector('.tooltiptext');
+            if (tooltipText) {
+                tooltipText.classList.remove('is-active');
+            }
         });
     };
 
-    // Hide tooltips on scroll to prevent them from becoming detached
+    // Global listener to close tooltips when clicking anywhere else
+    document.body.addEventListener('click', hideAllTooltips);
     window.addEventListener('scroll', hideAllTooltips, true);
 
-    // Universal click listener to close tooltips
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.tooltip-wrapper')) {
-            hideAllTooltips();
-        }
-    });
-
-    document.querySelectorAll('.tooltip-wrapper').forEach(wrapper => {
+    allTooltipWrappers.forEach(wrapper => {
         wrapper.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-
+            e.stopPropagation(); // Stop the click from bubbling up to the body listener
+            
             const tooltipText = wrapper.querySelector('.tooltiptext');
             if (!tooltipText) return;
 
             const wasActive = tooltipText.classList.contains('is-active');
 
-            // Hide all other tooltips first
+            // Hide all tooltips before showing the new one
             hideAllTooltips();
 
-            if (wasActive) {
-                // If it was already active, the command above already closed it.
-                return;
+            if (!wasActive) {
+                // If it wasn't active, show it
+                tooltipText.classList.add('is-active');
+
+                // --- Position Calculation ---
+                const triggerRect = wrapper.getBoundingClientRect();
+                const tooltipRect = tooltipText.getBoundingClientRect();
+
+                // Position vertically above the trigger
+                let top = triggerRect.top - tooltipRect.height - 8; // 8px gap
+
+                // Center horizontally
+                let left = triggerRect.left + (triggerRect.width / 2) - (tooltipRect.width / 2);
+
+                // Boundary checks
+                if (left < 10) left = 10;
+                if ((left + tooltipRect.width) > window.innerWidth) {
+                    left = window.innerWidth - tooltipRect.width - 10;
+                }
+                if (top < 10) top = triggerRect.bottom + 8; // Fallback to below if no space on top
+
+                tooltipText.style.top = `${top}px`;
+                tooltipText.style.left = `${left}px`;
             }
-
-            // --- Calculate and Apply Position ---
-            tooltipText.classList.add('is-active');
-
-            const triggerRect = wrapper.getBoundingClientRect();
-            const tooltipRect = tooltipText.getBoundingClientRect();
-            
-            // Vertically, position it 8px above the trigger
-            const top = triggerRect.top - tooltipRect.height - 8;
-
-            // Horizontally, center it on the trigger
-            let left = triggerRect.left + (triggerRect.width / 2) - (tooltipRect.width / 2);
-
-            // Boundary checks to prevent it from going off-screen
-            if (left < 10) {
-                left = 10; // Left boundary
-            }
-            if (left + tooltipRect.width > window.innerWidth - 10) {
-                left = window.innerWidth - tooltipRect.width - 10; // Right boundary
-            }
-            
-            tooltipText.style.top = `${top}px`;
-            tooltipText.style.left = `${left}px`;
+            // If it was active, hideAllTooltips() already handled it
         });
     });
 }
@@ -233,4 +229,3 @@ export function initializeUI() {
         initializeContactPage();
     }
 }
-
