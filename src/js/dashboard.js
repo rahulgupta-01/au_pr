@@ -60,8 +60,9 @@ export function initializeDashboard(milestones, costData, config) {
             const isChecked = state.points[p.id] || isAchievedByDate;
             const displayPoints = isChecked ? p.points : (p.currentPoints || 0);
             currentTotal += displayPoints;
-            // --- DEFINITIVE HTML FIX ---
-            // This corrected structure makes the label and tooltip separate, clickable elements.
+            // --- FINAL HTML STRUCTURE FIX ---
+            // This corrected structure separates the label and the tooltip wrapper,
+            // which is the key to solving the unclickable issue.
             return `<div class="points-item">
                         <input type="checkbox" class="interactive-checkbox" id="check_${p.id}" data-id="${p.id}" ${isChecked ? 'checked' : ''} ${isAchievedByDate ? 'disabled' : ''}>
                         <label for="check_${p.id}" class="item-label">${p.label}</label>
@@ -103,7 +104,7 @@ export function initializeDashboard(milestones, costData, config) {
         elements.visaStatus.textContent = extensionApplied ? 'Expires Feb 2028 (Ext. Active)' : 'Expires Feb 2027 (Ext. Pending)';
         const totalVisaDuration = calcDays(config.journeyStartDate, activeExpiryDate);
         const visaTimeUsed = calcDays(config.journeyStartDate, todayForCalculations);
-        elements.visaTimeProgress.style.width = `${(visaTimeUsed / totalVisaDuration) * 100}%`;
+        elements.visaTimeProgress.style.width = `${(visaTimeUsed / totalDuration) * 100}%`;
         const futureMilestones = milestones.filter(m => new Date(m.date) > todayForCalculations);
         if (futureMilestones.length > 0) {
             const nextM = futureMilestones[0];
