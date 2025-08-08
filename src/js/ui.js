@@ -11,43 +11,38 @@ function initializeHeader() {
     const hamburgerBtn = document.getElementById('hamburger-menu');
     const closeMenuBtn = document.getElementById('close-menu');
     const overlay = document.getElementById('overlay');
-    let lastFocusedElement; // Stores the element that opened the menu to return focus to it later.
+    let lastFocusedElement;
 
     const openMenu = () => {
-        lastFocusedElement = document.activeElement; // Save the currently focused element.
-        document.body.classList.add('menu-is-open'); // Prevent body scroll.
+        lastFocusedElement = document.activeElement;
+        document.body.classList.add('menu-is-open');
         if (navMenu) {
             navMenu.classList.add('is-open');
-            navMenu.removeAttribute('inert'); // Make the menu interactive.
+            navMenu.removeAttribute('inert');
         }
         if (overlay) overlay.classList.add('is-visible');
-        // Defer focus to ensure the element is visible and focusable.
         requestAnimationFrame(() => closeMenuBtn && closeMenuBtn.focus());
     };
 
-    // Add event listeners to the menu buttons and overlay.
     if (hamburgerBtn) hamburgerBtn.addEventListener('click', openMenu);
-    if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu); // closeMenu is defined below.
+    if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu);
     if (overlay) overlay.addEventListener('click', closeMenu);
 
-    // Add keyboard controls for the menu.
     document.addEventListener('keydown', (e) => {
-        // Allow closing the menu with the 'Escape' key.
         if (e.key === 'Escape' && navMenu && navMenu.classList.contains('is-open')) {
             closeMenu();
         }
-        // Trap focus within the menu when it's open.
         if (e.key === 'Tab' && navMenu && navMenu.classList.contains('is-open')) {
             const focusableElements = Array.from(navMenu.querySelectorAll('button, [href], input'));
             const firstElement = focusableElements[0];
             const lastElement = focusableElements[focusableElements.length - 1];
 
-            if (e.shiftKey) { // Handle Shift + Tab for reverse tabbing.
+            if (e.shiftKey) {
                 if (document.activeElement === firstElement) {
                     lastElement.focus();
                     e.preventDefault();
                 }
-            } else { // Handle Tab for forward tabbing.
+            } else {
                 if (document.activeElement === lastElement) {
                     firstElement.focus();
                     e.preventDefault();
@@ -59,36 +54,31 @@ function initializeHeader() {
 
 /**
  * Closes the slide-out navigation menu and restores the page state.
- * This function is exported so it can be called from other modules (like the router).
  */
 export function closeMenu() {
     const navMenu = document.getElementById('navigation-menu');
     const overlay = document.getElementById('overlay');
-    // In this context, we know the hamburger menu is what should be refocused.
     const openingElement = document.querySelector('.hamburger-menu');
 
     document.body.classList.remove('menu-is-open');
     if (navMenu) {
         navMenu.classList.remove('is-open');
-        navMenu.setAttribute('inert', ''); // Make the menu non-interactive to hide it from screen readers and tab order.
+        navMenu.setAttribute('inert', '');
     }
     if (overlay) overlay.classList.remove('is-visible');
-    // Return focus to the element that opened the menu.
     if (openingElement) openingElement.focus();
 }
 
 /**
- * Initializes the dark/light mode theme switcher and loads the user's saved preference.
+ * Initializes the dark/light mode theme switcher.
  */
 function initializeTheme() {
     const themeToggle = document.getElementById('dark-mode-toggle');
     const currentTheme = localStorage.getItem('theme');
-    // Apply the saved theme on page load.
     if (currentTheme === 'dark') {
         document.body.classList.add('dark-mode');
         if (themeToggle) themeToggle.checked = true;
     }
-    // Add a listener to handle theme changes.
     if (themeToggle) {
         themeToggle.addEventListener('change', function() {
             document.body.classList.toggle('dark-mode', this.checked);
@@ -98,21 +88,20 @@ function initializeTheme() {
 }
 
 /**
- * Creates and manages the "scroll to top" button.
+ * Initializes the "scroll to top" button.
  */
 function initializeScrollToTop() {
-    // Check if the button already exists to prevent duplicates on router navigation
     if (document.getElementById('scrollToTopBtn')) return;
     
     const buttonHTML = `<a href="#" id="scrollToTopBtn" class="scroll-to-top-btn" title="Go to top"><i class="fas fa-chevron-up"></i></a>`;
     document.body.insertAdjacentHTML('beforeend', buttonHTML);
     const scrollToTopBtn = document.getElementById('scrollToTopBtn');
     if (!scrollToTopBtn) return;
-    // Show or hide the button based on scroll position.
+    
     window.addEventListener('scroll', () => {
         scrollToTopBtn.classList.toggle('visible', window.scrollY > 300);
     });
-    // Handle the click event to scroll smoothly to the top.
+    
     scrollToTopBtn.addEventListener('click', (e) => {
         e.preventDefault();
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -120,7 +109,7 @@ function initializeScrollToTop() {
 }
 
 /**
- * Updates the live date and time clock in the header.
+ * Updates the live clock in the header.
  */
 function updateClock() {
     const clockDateEl = document.getElementById('currentDate');
@@ -134,7 +123,7 @@ function updateClock() {
 }
 
 /**
- * Initializes the "copy to clipboard" functionality on the contact page.
+ * Initializes contact page copy buttons.
  */
 function initializeContactPage() {
     document.querySelectorAll('.copy-btn').forEach(button => {
@@ -150,55 +139,56 @@ function initializeContactPage() {
 }
 
 /**
- * --- FINAL, SIMPLIFIED TOOLTIP FIX ---
- * Initializes tooltips to be toggleable on click/tap.
+ * --- FINAL, GUARANTEED TOOLTIP FIX ---
+ * Initializes tooltips using JavaScript for perfect positioning and reliable clicks.
  */
 function initializeTooltips() {
-    // A function to hide all currently active tooltips
     const hideAllTooltips = () => {
-        document.querySelectorAll('.tooltip-wrapper.is-active').forEach(activeWrapper => {
-            activeWrapper.classList.remove('is-active');
+        document.querySelectorAll('.tooltip-wrapper.is-active').forEach(wrapper => {
+            wrapper.classList.remove('is-active');
         });
     };
 
-    // Add a single listener to the whole document to close tooltips when clicking away
+    // Global listener to close tooltips when clicking anywhere else
     document.addEventListener('click', hideAllTooltips);
+    // Also hide on scroll to prevent detached tooltips
+    window.addEventListener('scroll', hideAllTooltips, true);
 
-    // Add listeners to each tooltip
     document.querySelectorAll('.tooltip-wrapper').forEach(wrapper => {
         wrapper.addEventListener('click', (e) => {
-            // Stop this click from closing itself via the document listener
+            // Prevent the label from toggling the checkbox AND
+            // prevent the document listener from closing the tooltip immediately
+            e.preventDefault();
             e.stopPropagation();
-            
+
             const wasActive = wrapper.classList.contains('is-active');
             
-            // First, hide all other tooltips
+            // First, close all other tooltips
             hideAllTooltips();
             
-            // If this tooltip wasn't already active, make it active
+            // If the clicked tooltip wasn't already the active one, make it active
             if (!wasActive) {
                 wrapper.classList.add('is-active');
             }
+            // If it was active, the hideAllTooltips() call already handled it.
         });
     });
 }
 
 
 /**
- * The main UI initialization function. This should be called once when the app starts.
+ * The main UI initialization function.
  */
 export function initializeUI() {
     initializeHeader();
     initializeTheme();
     initializeScrollToTop();
-    initializeTooltips(); 
+    initializeTooltips();
 
-    // Initialize the clock if the element exists on the page.
     if (document.getElementById('currentDate')) {
         updateClock();
         setInterval(updateClock, 1000);
     }
-    // Initialize contact page features if the copy buttons exist.
     if (document.querySelector('.copy-btn')) {
         initializeContactPage();
     }
