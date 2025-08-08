@@ -1223,7 +1223,7 @@ body.dark-mode .scroll-to-top-btn {
     }
 }
 
-@@media (max-width: 768px) {
+@media (max-width: 768px) {
     .container {
         padding: 1rem; /* 16px */
     }
@@ -1246,8 +1246,14 @@ body.dark-mode .scroll-to-top-btn {
         display: none;
     }
 
+    .document-table tbody {
+        display: block;
+        width: 100%;
+    }
+
     .document-table tr {
         display: block;
+        width: 100%;
         margin-bottom: 1rem; /* 16px */
         border: 1px solid var(--border-color);
         border-radius: var(--border-radius-md);
@@ -1257,6 +1263,7 @@ body.dark-mode .scroll-to-top-btn {
 
     .document-table td {
         display: block;
+        width: 100%;
         border: none;
         border-bottom: 1px dotted var(--border-color);
         position: relative;
@@ -1282,19 +1289,19 @@ body.dark-mode .scroll-to-top-btn {
         text-align: left;
     }
 
-    /* THIS IS THE FIX: New styles for mobile tooltips */
+    /* Responsive styles for mobile tooltips */
     .points-item,
     .cost-item {
-        position: relative; /* This makes the row the positioning context */
+        position: relative;
     }
 
     .tooltip .tooltiptext {
         bottom: 100%;
         left: 50%;
-        transform: translateX(-50%); /* Center horizontally within the row */
-        margin-bottom: 8px; /* Add a small gap */
-        margin-left: 0; /* Reset desktop margin */
-        width: calc(100% - 2rem); /* Make it nearly the full width of the card */
+        transform: translateX(-50%);
+        margin-bottom: 8px;
+        margin-left: 0;
+        width: calc(100% - 2rem);
         max-width: 320px;
     }
 }
