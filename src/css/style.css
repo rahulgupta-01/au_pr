@@ -672,6 +672,7 @@ input:checked+.slider:before {
 /* ==========================================================================
    6. Page-Specific Styles (Profile, Documents, Timeline, Contact)
    ========================================================================== */
+
 /* Profile Page */
 .profile-layout {
     display: flex;
@@ -808,19 +809,20 @@ input:checked+.slider:before {
 
 .document-table td {
     color: var(--text-medium);
-    vertical-align: middle;
+    vertical-align: middle; /* This is the key fix: aligns all cell content centrally. */
 }
 
 .document-table td:first-child {
     font-weight: 500;
     color: var(--text-dark);
-    display: flex;
-    align-items: center;
-    gap: 0.6rem; /* 10px */
+    /* Note: We are no longer using flexbox here to avoid conflicts. */
 }
 
 .document-table td:first-child i {
     color: var(--primary-color);
+    width: 20px;
+    text-align: center;
+    margin-right: 0.6rem; /* Use margin for spacing instead of flex-gap. */
 }
 
 .document-table td:last-child {
@@ -833,7 +835,7 @@ input:checked+.slider:before {
 }
 
 .status-badge {
-    padding: 0.25rem 0.6rem; /* 4px 10px */
+    padding: 0.25rem 0.6rem;
     border-radius: 50px;
     font-size: 0.85rem;
     font-weight: 600;
