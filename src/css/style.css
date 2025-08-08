@@ -83,46 +83,55 @@ a:hover {
     border-radius: 4px;
 }
 
+/* --- FINAL TOOLTIP CSS --- */
 .tooltip-wrapper {
+    position: relative; /* This is the anchor for the tooltip */
     display: inline-block;
-    cursor: help;
+    vertical-align: middle; /* Align nicely with the text */
 }
 
 .tooltip {
+    cursor: help;
     display: inline-block;
     border-bottom: 1px dotted var(--text-light);
-    margin-left: 5px;
+    margin-left: 8px; /* Give it space from the label */
 }
 
-/* --- FINAL TOOLTIP CSS --- */
 .tooltiptext {
-    visibility: hidden; /* Hidden by default */
+    visibility: hidden;
     opacity: 0;
-    position: fixed; /* Escape clipping containers */
-    z-index: 1001; /* Stay on top */
+    position: absolute; /* Positioned relative to the wrapper */
+    z-index: 10;
     
-    width: 290px;
-    max-width: calc(100vw - 20px); /* Prevent overflow on very narrow screens */
-    box-sizing: border-box;
+    /* Position it above the icon */
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 8px; /* Gap between icon and tooltip */
 
+    /* Sizing and Appearance */
+    width: 280px;
+    max-width: 80vw;
+    padding: 12px;
+    border-radius: 6px;
     background-color: var(--text-dark);
     color: var(--card-bg);
-    text-align: left;
-    border-radius: 6px;
-    padding: 12px;
+    
     font-size: 0.9rem;
     line-height: 1.5;
     font-weight: 400;
+    text-align: left;
     
-    pointer-events: none; /* Let clicks pass through */
-    transition: opacity 0.2s ease, visibility 0.2s ease;
+    pointer-events: none;
+    transition: opacity 0.2s, visibility 0.2s;
 }
 
-/* JS will toggle this class to show the tooltip */
-.tooltiptext.is-active {
+/* Show the tooltip when the wrapper is active */
+.tooltip-wrapper.is-active .tooltiptext {
     visibility: visible;
     opacity: 1;
 }
+
 
 /* ==========================================================================
    3. Layout (Container, Card, Grid)
@@ -443,7 +452,6 @@ input:checked+.slider:before {
     border-bottom: 1px solid var(--border-color);
     align-items: center;
     font-size: 0.95rem;
-    position: relative;
 }
 
 .points-item:last-of-type,
@@ -453,12 +461,8 @@ input:checked+.slider:before {
 
 .item-label {
     font-weight: 500;
-}
-
-.label-and-tooltip {
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
+    flex-grow: 1; /* Allow label to take up space */
+    cursor: pointer; /* Make it clear the label is clickable */
 }
 
 .cost-item span:last-of-type {
