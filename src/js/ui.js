@@ -150,36 +150,69 @@ function initializeContactPage() {
 }
 
 /**
- * Initializes tooltips to be toggleable on click/tap for mobile devices,
- * while retaining hover functionality for desktops.
+ * --- DEFINITIVE TOOLTIP FIX ---
+ * Initializes tooltips using JavaScript for perfect positioning.
  */
 function initializeTooltips() {
-    const tooltipWrappers = document.querySelectorAll('.tooltip-wrapper');
+    const hideAllTooltips = () => {
+        document.querySelectorAll('.tooltiptext.is-active').forEach(tooltip => {
+            tooltip.classList.remove('is-active');
+        });
+    };
 
-    // Close all tooltips when clicking anywhere else on the page
-    document.addEventListener('click', () => {
-        tooltipWrappers.forEach(wrapper => wrapper.classList.remove('is-active'));
+    // Hide tooltips on scroll to prevent them from becoming detached
+    window.addEventListener('scroll', hideAllTooltips, true);
+
+    // Universal click listener to close tooltips
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.tooltip-wrapper')) {
+            hideAllTooltips();
+        }
     });
 
-    tooltipWrappers.forEach(wrapper => {
+    document.querySelectorAll('.tooltip-wrapper').forEach(wrapper => {
         wrapper.addEventListener('click', (e) => {
-            // --- FIX: Stop the label from toggling the checkbox ---
-            e.preventDefault(); 
+            e.preventDefault();
             e.stopPropagation();
 
-            const wasActive = wrapper.classList.contains('is-active');
-            
-            // First, close all other tooltips
-            tooltipWrappers.forEach(t => t.classList.remove('is-active'));
+            const tooltipText = wrapper.querySelector('.tooltiptext');
+            if (!tooltipText) return;
 
-            // If the clicked tooltip was not already active, activate it.
-            if (!wasActive) {
-                wrapper.classList.add('is-active');
+            const wasActive = tooltipText.classList.contains('is-active');
+
+            // Hide all other tooltips first
+            hideAllTooltips();
+
+            if (wasActive) {
+                // If it was already active, the command above already closed it.
+                return;
             }
+
+            // --- Calculate and Apply Position ---
+            tooltipText.classList.add('is-active');
+
+            const triggerRect = wrapper.getBoundingClientRect();
+            const tooltipRect = tooltipText.getBoundingClientRect();
+            
+            // Vertically, position it 8px above the trigger
+            const top = triggerRect.top - tooltipRect.height - 8;
+
+            // Horizontally, center it on the trigger
+            let left = triggerRect.left + (triggerRect.width / 2) - (tooltipRect.width / 2);
+
+            // Boundary checks to prevent it from going off-screen
+            if (left < 10) {
+                left = 10; // Left boundary
+            }
+            if (left + tooltipRect.width > window.innerWidth - 10) {
+                left = window.innerWidth - tooltipRect.width - 10; // Right boundary
+            }
+            
+            tooltipText.style.top = `${top}px`;
+            tooltipText.style.left = `${left}px`;
         });
     });
 }
-
 
 /**
  * The main UI initialization function. This should be called once when the app starts.
@@ -188,7 +221,7 @@ export function initializeUI() {
     initializeHeader();
     initializeTheme();
     initializeScrollToTop();
-    initializeTooltips(); // This will now correctly initialize tooltips on every page load
+    initializeTooltips(); 
 
     // Initialize the clock if the element exists on the page.
     if (document.getElementById('currentDate')) {
@@ -200,3 +233,4 @@ export function initializeUI() {
         initializeContactPage();
     }
 }
+
