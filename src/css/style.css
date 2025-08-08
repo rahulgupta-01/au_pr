@@ -94,15 +94,15 @@ a:hover {
     margin-left: 5px;
 }
 
-/* --- DEFINITIVE TOOLTIP FIX --- */
+/* --- FINAL TOOLTIP CSS --- */
 .tooltiptext {
-    visibility: hidden;
+    visibility: hidden; /* Hidden by default */
     opacity: 0;
-    position: fixed; /* Position relative to the viewport to escape clipping */
-    z-index: 1001; /* Ensure it's on top of everything */
+    position: fixed; /* Escape clipping containers */
+    z-index: 1001; /* Stay on top */
     
     width: 290px;
-    max-width: 90vw;
+    max-width: calc(100vw - 20px); /* Prevent overflow on very narrow screens */
     box-sizing: border-box;
 
     background-color: var(--text-dark);
@@ -113,21 +113,15 @@ a:hover {
     font-size: 0.9rem;
     line-height: 1.5;
     font-weight: 400;
-
-    pointer-events: none;
-    transition: opacity 0.2s ease-in-out;
+    
+    pointer-events: none; /* Let clicks pass through */
+    transition: opacity 0.2s ease, visibility 0.2s ease;
 }
 
+/* JS will toggle this class to show the tooltip */
 .tooltiptext.is-active {
     visibility: visible;
     opacity: 1;
-}
-
-/* Hide hover effects on touch devices to prevent conflicts */
-@media (hover: hover) {
-    .tooltip-wrapper:hover .tooltiptext {
-        /* This can be kept for desktop hover previews if desired, but click is more reliable */
-    }
 }
 
 /* ==========================================================================
