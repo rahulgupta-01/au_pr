@@ -60,12 +60,14 @@ export function initializeDashboard(milestones, costData, config) {
             const isChecked = state.points[p.id] || isAchievedByDate;
             const displayPoints = isChecked ? p.points : (p.currentPoints || 0);
             currentTotal += displayPoints;
-            // THIS IS THE FIX: The <label> and the tooltip <span> are now siblings inside the new <div>
+            // --- DEFINITIVE HTML FIX ---
+            // This corrected structure makes the label and tooltip separate, clickable elements.
             return `<div class="points-item">
                         <input type="checkbox" class="interactive-checkbox" id="check_${p.id}" data-id="${p.id}" ${isChecked ? 'checked' : ''} ${isAchievedByDate ? 'disabled' : ''}>
-                        <div class="label-and-tooltip">
-                            <label for="check_${p.id}" class="item-label">${p.label}</label>
-                            <span class="tooltip-wrapper"><span class="tooltip">(i)<span class="tooltiptext">${p.tooltip}</span></span></span>
+                        <label for="check_${p.id}" class="item-label">${p.label}</label>
+                        <div class="tooltip-wrapper">
+                            <span class="tooltip">(i)</span>
+                            <div class="tooltiptext">${p.tooltip}</div>
                         </div>
                         <span class="points-value ${isChecked ? 'points-achieved' : 'points-pending'}">${displayPoints}</span>
                     </div>`;
