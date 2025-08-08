@@ -18,8 +18,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          # Use the active Long-Term Support version of Node.js
-          node-version: 'lts/*'
+          # Pin the version to a specific LTS release for stability
+          node-version: '20.x'
 
       - name: Install Dependencies
         run: npm install

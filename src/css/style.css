@@ -83,7 +83,6 @@ a:hover {
     border-radius: 4px;
 }
 
-/* --- FIX: Wrapper to handle JS click events separately from label --- */
 .tooltip-wrapper {
     display: inline-block;
 }
@@ -106,9 +105,13 @@ a:hover {
     padding: 12px;
     position: absolute;
     z-index: 10;
-    bottom: 125%;
+    
+    /* New Positioning Logic */
+    bottom: 100%; /* Position it to start at the top of the row */
     left: 50%;
-    margin-left: -140px;
+    transform: translateX(-50%); /* Center it horizontally within the row */
+    margin-bottom: 8px; /* Add a small gap between the icon and the tooltip */
+
     opacity: 0;
     transition: opacity 0.3s;
     font-size: 0.9rem;
@@ -117,7 +120,6 @@ a:hover {
     pointer-events: none;
 }
 
-/* Show tooltip on desktop hover OR when active class is added by JS */
 .tooltip-wrapper:hover .tooltiptext,
 .tooltip-wrapper.is-active .tooltiptext {
     visibility: visible;
@@ -125,7 +127,6 @@ a:hover {
     pointer-events: auto;
 }
 
-/* On devices that CANNOT hover (i.e., mobile), change the cursor */
 @media (hover: none) {
     .tooltip {
         cursor: pointer;
@@ -452,6 +453,7 @@ input:checked+.slider:before {
     border-bottom: 1px solid var(--border-color);
     align-items: center;
     font-size: 0.95rem;
+    position: relative;
 }
 
 .points-item:last-of-type,
@@ -460,8 +462,17 @@ input:checked+.slider:before {
 }
 
 .item-label {
-    flex-grow: 1;
     font-weight: 500;
+}
+
+.label-and-tooltip {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+}
+
+.cost-item span:last-of-type {
+    margin-left: auto;
 }
 
 .points-value {
@@ -1212,7 +1223,7 @@ body.dark-mode .scroll-to-top-btn {
     }
 }
 
-@media (max-width: 768px) {
+@@media (max-width: 768px) {
     .container {
         padding: 1rem; /* 16px */
     }
@@ -1269,6 +1280,22 @@ body.dark-mode .scroll-to-top-btn {
         font-weight: bold;
         color: var(--text-dark);
         text-align: left;
+    }
+
+    /* THIS IS THE FIX: New styles for mobile tooltips */
+    .points-item,
+    .cost-item {
+        position: relative; /* This makes the row the positioning context */
+    }
+
+    .tooltip .tooltiptext {
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%); /* Center horizontally within the row */
+        margin-bottom: 8px; /* Add a small gap */
+        margin-left: 0; /* Reset desktop margin */
+        width: calc(100% - 2rem); /* Make it nearly the full width of the card */
+        max-width: 320px;
     }
 }
 

@@ -1,17 +1,8 @@
 import { todayForCalculations, calcDays } from './utils.js';
 
-export function initializeDashboard(milestones, costData) {
+export function initializeDashboard(milestones, costData, config) {
     const dashboardContainer = document.querySelector('.main-content');
     if (!dashboardContainer) return;
-
-    // --- CONFIGURATION ---
-    const config = {
-        userDOB: '2001-05-18',
-        journeyStartDate: '2025-02-15',
-        initialVisaExpiryDate: '2027-02-15',
-        finalVisaExpiryDate: '2028-02-15',
-        pointsTarget: 95
-    };
 
     let state = { points: {}, costs: {} };
     const D = (id) => dashboardContainer.querySelector(`#${id}`);
@@ -46,14 +37,18 @@ export function initializeDashboard(milestones, costData) {
         const age = calculateAge(config.userDOB);
         const birthday25 = new Date(config.userDOB);
         birthday25.setFullYear(birthday25.getFullYear() + 25);
+
+        const jrpCompletionMilestone = milestones.find(m => m.id === 'jrp_complete');
+        const workExpAchievedDate = jrpCompletionMilestone ? jrpCompletionMilestone.date : null;
+
         return [
             { id: 'age', label: 'Age', points: 30, currentPoints: 25, achievedDate: birthday25.toISOString().split('T')[0], tooltip: `You are currently ${age}. You get 25 points for age 18-24, and 30 points for 25-32. You will turn 25 on ${birthday25.toLocaleDateString('en-AU', { year: 'numeric', month: 'long', day: 'numeric' })} and get the extra 5 points.` },
             { id: 'english', label: 'Superior English', points: 20, currentPoints: 10, initial: false, tooltip: 'Targeting 20 points for a superior score (e.g., PTE 79+), up from the current 10 points for proficient English.' },
-            { id: 'work_exp', label: '1 Year Aus Work Exp', points: 5, achievedDate: '2027-07-15', initial: false, tooltip: 'Achieved after completing the 12-month Job Ready Program.' },
+            { id: 'work_exp', label: '1 Year Aus Work Exp', points: 5, achievedDate: workExpAchievedDate, initial: false, tooltip: 'Achieved after completing the 12-month Job Ready Program.' },
             { id: 'degree', label: 'Bachelor Degree', points: 15, initial: true, tooltip: 'Points for your Bachelor of IT degree from Griffith University.' },
             { id: 'study_req', label: 'Australian Study Req', points: 5, initial: true, tooltip: 'Points for completing a 2-year course in Australia.' },
             { id: 'naati', label: 'Community Language', points: 5, initial: false, tooltip: '5 points to be gained by passing the NAATI CCL (Hindi) test.' },
-            { id: 'regional', label: 'Regional Study', points: 5, initial: true, tooltip: 'Points for studying your degree in Gold Coast, a designated regional area.' },
+            { id: 'regional', label: 'Regional Study', points: 5, initial: true, tooltip: 'Points for studying your degree in a designated regional area.' },
             { id: 'single', label: 'Single Applicant', points: 10, initial: true, tooltip: '10 points for applying as a single applicant.' },
         ];
     }
@@ -65,8 +60,15 @@ export function initializeDashboard(milestones, costData) {
             const isChecked = state.points[p.id] || isAchievedByDate;
             const displayPoints = isChecked ? p.points : (p.currentPoints || 0);
             currentTotal += displayPoints;
-            // This line has been reverted to the original tooltip structure
-            return `<div class="points-item"><input type="checkbox" class="interactive-checkbox" id="check_${p.id}" data-id="${p.id}" ${isChecked ? 'checked' : ''} ${isAchievedByDate ? 'disabled' : ''}><label for="check_${p.id}" class="item-label">${p.label} <span class="tooltip-wrapper"><span class="tooltip">(i)<span class="tooltiptext">${p.tooltip}</span></span></span></label><span class="points-value ${isChecked ? 'points-achieved' : 'points-pending'}">${displayPoints}</span></div>`;
+            // THIS IS THE FIX: The <label> and the tooltip <span> are now siblings inside the new <div>
+            return `<div class="points-item">
+                        <input type="checkbox" class="interactive-checkbox" id="check_${p.id}" data-id="${p.id}" ${isChecked ? 'checked' : ''} ${isAchievedByDate ? 'disabled' : ''}>
+                        <div class="label-and-tooltip">
+                            <label for="check_${p.id}" class="item-label">${p.label}</label>
+                            <span class="tooltip-wrapper"><span class="tooltip">(i)<span class="tooltiptext">${p.tooltip}</span></span></span>
+                        </div>
+                        <span class="points-value ${isChecked ? 'points-achieved' : 'points-pending'}">${displayPoints}</span>
+                    </div>`;
         }).join('');
         elements.currentTotalPoints.textContent = currentTotal;
         elements.currentPoints.textContent = currentTotal;
