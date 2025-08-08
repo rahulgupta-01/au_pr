@@ -151,7 +151,7 @@ function initializeContactPage() {
 
 /**
  * --- FINAL, SIMPLIFIED TOOLTIP FIX ---
- * Initializes tooltips to be toggleable on click/tap for mobile devices.
+ * Initializes tooltips to be toggleable on click/tap.
  */
 function initializeTooltips() {
     // A function to hide all currently active tooltips
@@ -167,15 +167,15 @@ function initializeTooltips() {
     // Add listeners to each tooltip
     document.querySelectorAll('.tooltip-wrapper').forEach(wrapper => {
         wrapper.addEventListener('click', (e) => {
-            // Stop the click from bubbling up and immediately being closed by the document listener
+            // Stop this click from closing itself via the document listener
             e.stopPropagation();
             
             const wasActive = wrapper.classList.contains('is-active');
             
-            // First, close all other tooltips
+            // First, hide all other tooltips
             hideAllTooltips();
             
-            // If the clicked tooltip wasn't already the active one, make it active
+            // If this tooltip wasn't already active, make it active
             if (!wasActive) {
                 wrapper.classList.add('is-active');
             }
