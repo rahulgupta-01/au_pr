@@ -150,65 +150,39 @@ function initializeContactPage() {
 }
 
 /**
- * --- FINAL TOOLTIP FIX ---
- * Initializes tooltips using JavaScript for perfect positioning and reliable clicks.
+ * --- FINAL, SIMPLIFIED TOOLTIP FIX ---
+ * Initializes tooltips to be toggleable on click/tap for mobile devices.
  */
 function initializeTooltips() {
-    const allTooltipWrappers = document.querySelectorAll('.tooltip-wrapper');
-
+    // A function to hide all currently active tooltips
     const hideAllTooltips = () => {
-        allTooltipWrappers.forEach(wrapper => {
-            const tooltipText = wrapper.querySelector('.tooltiptext');
-            if (tooltipText) {
-                tooltipText.classList.remove('is-active');
-            }
+        document.querySelectorAll('.tooltip-wrapper.is-active').forEach(activeWrapper => {
+            activeWrapper.classList.remove('is-active');
         });
     };
 
-    // Global listener to close tooltips when clicking anywhere else
-    document.body.addEventListener('click', hideAllTooltips);
-    window.addEventListener('scroll', hideAllTooltips, true);
+    // Add a single listener to the whole document to close tooltips when clicking away
+    document.addEventListener('click', hideAllTooltips);
 
-    allTooltipWrappers.forEach(wrapper => {
+    // Add listeners to each tooltip
+    document.querySelectorAll('.tooltip-wrapper').forEach(wrapper => {
         wrapper.addEventListener('click', (e) => {
-            e.stopPropagation(); // Stop the click from bubbling up to the body listener
+            // Stop the click from bubbling up and immediately being closed by the document listener
+            e.stopPropagation();
             
-            const tooltipText = wrapper.querySelector('.tooltiptext');
-            if (!tooltipText) return;
-
-            const wasActive = tooltipText.classList.contains('is-active');
-
-            // Hide all tooltips before showing the new one
+            const wasActive = wrapper.classList.contains('is-active');
+            
+            // First, close all other tooltips
             hideAllTooltips();
-
+            
+            // If the clicked tooltip wasn't already the active one, make it active
             if (!wasActive) {
-                // If it wasn't active, show it
-                tooltipText.classList.add('is-active');
-
-                // --- Position Calculation ---
-                const triggerRect = wrapper.getBoundingClientRect();
-                const tooltipRect = tooltipText.getBoundingClientRect();
-
-                // Position vertically above the trigger
-                let top = triggerRect.top - tooltipRect.height - 8; // 8px gap
-
-                // Center horizontally
-                let left = triggerRect.left + (triggerRect.width / 2) - (tooltipRect.width / 2);
-
-                // Boundary checks
-                if (left < 10) left = 10;
-                if ((left + tooltipRect.width) > window.innerWidth) {
-                    left = window.innerWidth - tooltipRect.width - 10;
-                }
-                if (top < 10) top = triggerRect.bottom + 8; // Fallback to below if no space on top
-
-                tooltipText.style.top = `${top}px`;
-                tooltipText.style.left = `${left}px`;
+                wrapper.classList.add('is-active');
             }
-            // If it was active, hideAllTooltips() already handled it
         });
     });
 }
+
 
 /**
  * The main UI initialization function. This should be called once when the app starts.
