@@ -11,38 +11,43 @@ function initializeHeader() {
     const hamburgerBtn = document.getElementById('hamburger-menu');
     const closeMenuBtn = document.getElementById('close-menu');
     const overlay = document.getElementById('overlay');
-    let lastFocusedElement;
+    let lastFocusedElement; // Stores the element that opened the menu to return focus to it later.
 
     const openMenu = () => {
-        lastFocusedElement = document.activeElement;
-        document.body.classList.add('menu-is-open');
+        lastFocusedElement = document.activeElement; // Save the currently focused element.
+        document.body.classList.add('menu-is-open'); // Prevent body scroll.
         if (navMenu) {
             navMenu.classList.add('is-open');
-            navMenu.removeAttribute('inert');
+            navMenu.removeAttribute('inert'); // Make the menu interactive.
         }
         if (overlay) overlay.classList.add('is-visible');
+        // Defer focus to ensure the element is visible and focusable.
         requestAnimationFrame(() => closeMenuBtn && closeMenuBtn.focus());
     };
 
+    // Add event listeners to the menu buttons and overlay.
     if (hamburgerBtn) hamburgerBtn.addEventListener('click', openMenu);
-    if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu);
+    if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu); // closeMenu is defined below.
     if (overlay) overlay.addEventListener('click', closeMenu);
 
+    // Add keyboard controls for the menu.
     document.addEventListener('keydown', (e) => {
+        // Allow closing the menu with the 'Escape' key.
         if (e.key === 'Escape' && navMenu && navMenu.classList.contains('is-open')) {
             closeMenu();
         }
+        // Trap focus within the menu when it's open.
         if (e.key === 'Tab' && navMenu && navMenu.classList.contains('is-open')) {
             const focusableElements = Array.from(navMenu.querySelectorAll('button, [href], input'));
             const firstElement = focusableElements[0];
             const lastElement = focusableElements[focusableElements.length - 1];
 
-            if (e.shiftKey) {
+            if (e.shiftKey) { // Handle Shift + Tab for reverse tabbing.
                 if (document.activeElement === firstElement) {
                     lastElement.focus();
                     e.preventDefault();
                 }
-            } else {
+            } else { // Handle Tab for forward tabbing.
                 if (document.activeElement === lastElement) {
                     firstElement.focus();
                     e.preventDefault();
@@ -88,7 +93,7 @@ function initializeTheme() {
 }
 
 /**
- * Initializes the "scroll to top" button.
+ * Creates and manages the "scroll to top" button.
  */
 function initializeScrollToTop() {
     if (document.getElementById('scrollToTopBtn')) return;
@@ -139,42 +144,20 @@ function initializeContactPage() {
 }
 
 /**
- * --- FINAL, GUARANTEED TOOLTIP FIX ---
- * Initializes tooltips using JavaScript for perfect positioning and reliable clicks.
+ * --- FINAL, SIMPLIFIED TOOLTIP FIX ---
+ * The logic is now handled by the inline onclick in dashboard.js.
+ * This function just adds a global listener to close tooltips when clicking away.
  */
 function initializeTooltips() {
-    const hideAllTooltips = () => {
-        document.querySelectorAll('.tooltip-wrapper.is-active').forEach(wrapper => {
-            wrapper.classList.remove('is-active');
-        });
-    };
-
-    // Global listener to close tooltips when clicking anywhere else
-    document.addEventListener('click', hideAllTooltips);
-    // Also hide on scroll to prevent detached tooltips
-    window.addEventListener('scroll', hideAllTooltips, true);
-
-    document.querySelectorAll('.tooltip-wrapper').forEach(wrapper => {
-        wrapper.addEventListener('click', (e) => {
-            // Prevent the label from toggling the checkbox AND
-            // prevent the document listener from closing the tooltip immediately
-            e.preventDefault();
-            e.stopPropagation();
-
-            const wasActive = wrapper.classList.contains('is-active');
-            
-            // First, close all other tooltips
-            hideAllTooltips();
-            
-            // If the clicked tooltip wasn't already the active one, make it active
-            if (!wasActive) {
-                wrapper.classList.add('is-active');
-            }
-            // If it was active, the hideAllTooltips() call already handled it.
-        });
+    document.addEventListener('click', (e) => {
+        // If the click is not on a tooltip wrapper, close all active tooltips
+        if (!e.target.closest('.tooltip-wrapper')) {
+            document.querySelectorAll('.tooltip-wrapper.is-active').forEach(wrapper => {
+                wrapper.classList.remove('is-active');
+            });
+        }
     });
 }
-
 
 /**
  * The main UI initialization function.
