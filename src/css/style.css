@@ -1303,8 +1303,11 @@ body.dark-mode .scroll-to-top-btn {
         transform: translateX(-50%);
         margin-bottom: 8px;
         margin-left: 0;
-        width: calc(100% - 2rem);
-        max-width: 320px;
+        
+        /* --- TOOLTIP FIX --- */
+        width: 290px;
+        max-width: 90vw; /* Prevent overflow on narrow screens */
+        box-sizing: border-box; /* Ensure padding is included in the width */
     }
 }
 
