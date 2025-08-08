@@ -106,11 +106,11 @@ a:hover {
     position: absolute;
     z-index: 10;
     
-    /* New Positioning Logic */
-    bottom: 100%; /* Position it to start at the top of the row */
+    /* --- Positioning Logic --- */
+    bottom: 100%; 
     left: 50%;
-    transform: translateX(-50%); /* Center it horizontally within the row */
-    margin-bottom: 8px; /* Add a small gap between the icon and the tooltip */
+    transform: translateX(-50%); 
+    margin-bottom: 8px; 
 
     opacity: 0;
     transition: opacity 0.3s;
@@ -453,6 +453,7 @@ input:checked+.slider:before {
     border-bottom: 1px solid var(--border-color);
     align-items: center;
     font-size: 0.95rem;
+    /* --- THE FIX: Establish a positioning context --- */
     position: relative;
 }
 
@@ -809,20 +810,19 @@ input:checked+.slider:before {
 
 .document-table td {
     color: var(--text-medium);
-    vertical-align: middle; /* This is the key fix: aligns all cell content centrally. */
+    vertical-align: middle; 
 }
 
 .document-table td:first-child {
     font-weight: 500;
     color: var(--text-dark);
-    /* Note: We are no longer using flexbox here to avoid conflicts. */
 }
 
 .document-table td:first-child i {
     color: var(--primary-color);
     width: 20px;
     text-align: center;
-    margin-right: 0.6rem; /* Use margin for spacing instead of flex-gap. */
+    margin-right: 0.6rem;
 }
 
 .document-table td:last-child {
@@ -1291,23 +1291,16 @@ body.dark-mode .scroll-to-top-btn {
         text-align: left;
     }
 
-    /* Responsive styles for mobile tooltips */
-    .points-item,
-    .cost-item {
-        position: relative;
-    }
-
+    /* --- Responsive styles for mobile tooltips --- */
     .tooltip .tooltiptext {
-        bottom: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        margin-bottom: 8px;
-        margin-left: 0;
-        
-        /* --- TOOLTIP FIX --- */
         width: 290px;
         max-width: 90vw; /* Prevent overflow on narrow screens */
         box-sizing: border-box; /* Ensure padding is included in the width */
+
+        /* --- THE FIX: Adjust positioning relative to the now-positioned row --- */
+        top: 0;
+        transform: translate(-50%, -100%); /* Position above the icon */
+        margin-top: -8px; /* Add a gap */
     }
 }
 
@@ -1316,4 +1309,3 @@ body.dark-mode .scroll-to-top-btn {
         grid-template-columns: 1fr;
     }
 }
-
