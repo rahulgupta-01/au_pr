@@ -85,54 +85,50 @@ a:hover {
 
 .tooltip-wrapper {
     display: inline-block;
+    cursor: help;
 }
 
 .tooltip {
-    position: relative;
     display: inline-block;
-    cursor: help;
     border-bottom: 1px dotted var(--text-light);
     margin-left: 5px;
 }
 
-.tooltip .tooltiptext {
+/* --- DEFINITIVE TOOLTIP FIX --- */
+.tooltiptext {
     visibility: hidden;
-    width: 280px;
+    opacity: 0;
+    position: fixed; /* Position relative to the viewport to escape clipping */
+    z-index: 1001; /* Ensure it's on top of everything */
+    
+    width: 290px;
+    max-width: 90vw;
+    box-sizing: border-box;
+
     background-color: var(--text-dark);
     color: var(--card-bg);
     text-align: left;
     border-radius: 6px;
     padding: 12px;
-    position: absolute;
-    z-index: 10;
-    
-    /* --- Positioning Logic --- */
-    bottom: 100%; 
-    left: 50%;
-    transform: translateX(-50%); 
-    margin-bottom: 8px; 
-
-    opacity: 0;
-    transition: opacity 0.3s;
     font-size: 0.9rem;
     line-height: 1.5;
     font-weight: 400;
+
     pointer-events: none;
+    transition: opacity 0.2s ease-in-out;
 }
 
-.tooltip-wrapper:hover .tooltiptext,
-.tooltip-wrapper.is-active .tooltiptext {
+.tooltiptext.is-active {
     visibility: visible;
     opacity: 1;
-    pointer-events: auto;
 }
 
-@media (hover: none) {
-    .tooltip {
-        cursor: pointer;
+/* Hide hover effects on touch devices to prevent conflicts */
+@media (hover: hover) {
+    .tooltip-wrapper:hover .tooltiptext {
+        /* This can be kept for desktop hover previews if desired, but click is more reliable */
     }
 }
-
 
 /* ==========================================================================
    3. Layout (Container, Card, Grid)
@@ -453,7 +449,6 @@ input:checked+.slider:before {
     border-bottom: 1px solid var(--border-color);
     align-items: center;
     font-size: 0.95rem;
-    /* --- THE FIX: Establish a positioning context --- */
     position: relative;
 }
 
@@ -1289,18 +1284,6 @@ body.dark-mode .scroll-to-top-btn {
         font-weight: bold;
         color: var(--text-dark);
         text-align: left;
-    }
-
-    /* --- Responsive styles for mobile tooltips --- */
-    .tooltip .tooltiptext {
-        width: 290px;
-        max-width: 90vw; /* Prevent overflow on narrow screens */
-        box-sizing: border-box; /* Ensure padding is included in the width */
-
-        /* --- THE FIX: Adjust positioning relative to the now-positioned row --- */
-        top: 0;
-        transform: translate(-50%, -100%); /* Position above the icon */
-        margin-top: -8px; /* Add a gap */
     }
 }
 
