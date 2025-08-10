@@ -1,120 +1,93 @@
 /**
- * Global UI utilities: header/nav, theme, tooltips, clock, etc.
+ * @file Manages all general UI components and interactions for the application.
+ * Includes header navigation, theme switching, and other global UI elements.
  */
-let lastFocusedElement = null;
 
-export function closeMenu() {
-  const navMenu = document.getElementById('navigation-menu');
-  const overlay = document.getElementById('overlay');
-  if (!navMenu) return;
-  navMenu.classList.remove('is-open');
-  navMenu.setAttribute('inert', '');
-  navMenu.setAttribute('aria-hidden','true');
-  setMenuFocusable(false);
-  const hamburgerBtn = document.getElementById('hamburger-menu');
-  if (hamburgerBtn) hamburgerBtn.setAttribute('aria-expanded','false');
-  document.body.classList.remove('menu-is-open');
-  if (overlay) overlay.classList.remove('is-visible');
-  // Restore focus
-  if (lastFocusedElement) lastFocusedElement.focus();
-}
-
-function openMenu() {
-  lastFocusedElement = document.activeElement;
-  const navMenu = document.getElementById('navigation-menu');
-  const closeBtn = document.getElementById('close-menu');
-  const overlay = document.getElementById('overlay');
-  document.body.classList.add('menu-is-open');
-  if (navMenu) {
-    navMenu.classList.add('is-open');
-    navMenu.removeAttribute('inert');
-    navMenu.removeAttribute('aria-hidden');
-    setMenuFocusable(true);
-  }
-  if (hamburgerBtn) hamburgerBtn.setAttribute('aria-expanded','true');
-  if (overlay) overlay.classList.add('is-visible');
-  requestAnimationFrame(() => closeBtn && closeBtn.focus());
-}
-
-export function setActiveNavLink(path) {
-  document.querySelectorAll('nav a[data-nav]').forEach(a => {
-    const p = a.getAttribute('data-nav');
-    a.classList.toggle('active', p === path);
-  });
-}
-
-
-function setMenuFocusable(enabled) {
-  const navMenu = document.getElementById('navigation-menu');
-  if (!navMenu) return;
-  const links = navMenu.querySelectorAll('a, button, input, [tabindex]');
-  links.forEach(el => {
-    if (enabled) {
-      if (el.hasAttribute('data-prev-tabindex')) {
-        el.tabIndex = parseInt(el.getAttribute('data-prev-tabindex'), 10) || 0;
-        el.removeAttribute('data-prev-tabindex');
-      } else {
-        el.tabIndex = 0;
-      }
-    } else {
-      if (el.hasAttribute('tabindex')) el.setAttribute('data-prev-tabindex', el.getAttribute('tabindex'));
-      el.tabIndex = -1;
-    }
-  });
-}
-
-
-function ensureOverlayExists() {
-    let el = document.getElementById('overlay');
-    if (!el) {
-        el = document.createElement('div');
-        el.id = 'overlay';
-        el.className = 'overlay';
-        el.setAttribute('aria-hidden', 'true');
-        document.body.appendChild(el);
-    }
-    return el;
-}
-
+/**
+ * Initializes the header, including the slide-out navigation menu and its accessibility features.
+ */
 function initializeHeader() {
   const navMenu = document.getElementById('navigation-menu');
   const hamburgerBtn = document.getElementById('hamburger-menu');
   const closeMenuBtn = document.getElementById('close-menu');
   const overlay = document.getElementById('overlay');
+  let lastFocusedElement; // Stores the element that opened the menu to return focus to it later.
 
+  const openMenu = () => {
+    lastFocusedElement = document.activeElement; // Save the currently focused element.
+    document.body.classList.add('menu-is-open'); // Prevent body scroll.
+    if (navMenu) {
+      navMenu.classList.add('is-open');
+      navMenu.removeAttribute('inert'); // Make the menu interactive.
+    }
+    if (overlay) overlay.classList.add('is-visible');
+    // Defer focus to ensure the element is visible and focusable.
+    requestAnimationFrame(() => closeMenuBtn && closeMenuBtn.focus());
+  };
+
+  // Add event listeners to the menu buttons and overlay.
   if (hamburgerBtn) hamburgerBtn.addEventListener('click', openMenu);
-  // Ensure menu starts inert and unfocusable when closed
-  if (navMenu && !navMenu.classList.contains('is-open')) {
-    navMenu.setAttribute('inert','');
-    navMenu.setAttribute('aria-hidden','true');
-    setMenuFocusable(false);
-  }
-
-  if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu);
+  if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu); // closeMenu is defined below.
   if (overlay) overlay.addEventListener('click', closeMenu);
 
+  // Add keyboard controls for the menu.
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && navMenu && navMenu.classList.contains('is-open')) closeMenu();
-
+    // Allow closing the menu with the 'Escape' key.
+    if (e.key === 'Escape' && navMenu && navMenu.classList.contains('is-open')) {
+      closeMenu();
+    }
+    // Trap focus within the menu when it's open.
     if (e.key === 'Tab' && navMenu && navMenu.classList.contains('is-open')) {
-      const focusable = Array.from(navMenu.querySelectorAll('button, [href], input'));
-      if (!focusable.length) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (e.shiftKey) {
-        if (document.activeElement === first) { last.focus(); e.preventDefault(); }
-      } else {
-        if (document.activeElement === last) { first.focus(); e.preventDefault(); }
+      const focusableElements = Array.from(
+        navMenu.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+      ).filter(el => !el.hasAttribute('disabled'));
+      if (!focusableElements.length) return;
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (e.shiftKey) { // Handle Shift + Tab for reverse tabbing.
+        if (document.activeElement === firstElement) {
+          lastElement.focus();
+          e.preventDefault();
+        }
+      } else { // Handle Tab for forward tabbing.
+        if (document.activeElement === lastElement) {
+          firstElement.focus();
+          e.preventDefault();
+        }
       }
     }
   });
 }
 
+/**
+ * Closes the slide-out navigation menu and restores the page state.
+ */
+export function closeMenu() {
+  const navMenu = document.getElementById('navigation-menu');
+  const overlay = document.getElementById('overlay');
+  const openingElement = document.querySelector('.hamburger-menu');
+
+  document.body.classList.remove('menu-is-open');
+  if (navMenu) {
+    navMenu.classList.remove('is-open');
+    navMenu.setAttribute('inert', '');
+  }
+  if (overlay) overlay.classList.remove('is-visible');
+  if (openingElement) openingElement.focus();
+}
+
+/**
+ * Initializes the dark/light mode theme switcher.
+ */
 function initializeTheme() {
   const themeToggle = document.getElementById('dark-mode-toggle');
-  const saved = localStorage.getItem('theme');
-  if (saved) document.body.classList.toggle('dark-mode', saved === 'dark');
-  if (themeToggle) themeToggle.checked = document.body.classList.contains('dark-mode');
+  const currentTheme = localStorage.getItem('theme');
+  if (currentTheme === 'dark') {
+    document.body.classList.add('dark-mode');
+    if (themeToggle) themeToggle.checked = true;
+  }
   if (themeToggle) {
     themeToggle.addEventListener('change', function() {
       document.body.classList.toggle('dark-mode', this.checked);
@@ -123,83 +96,190 @@ function initializeTheme() {
   }
 }
 
+/**
+ * Creates and manages the "scroll to top" button.
+ */
+function initializeScrollToTop() {
+  if (document.getElementById('scrollToTopBtn')) return;
+
+  const buttonHTML = `<a href="#" id="scrollToTopBtn" class="scroll-to-top-btn" title="Go to top"><i class="fas fa-chevron-up"></i></a>`;
+  document.body.insertAdjacentHTML('beforeend', buttonHTML);
+  const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+  if (!scrollToTopBtn) return;
+
+  window.addEventListener('scroll', () => {
+    scrollToTopBtn.classList.toggle('visible', window.scrollY > 300);
+  });
+
+  scrollToTopBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+
+/**
+ * Updates the live clock in the header.
+ */
 function updateClock() {
-  const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Australia/Perth' };
-    const optionsTime = { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Australia/Perth', hour12: true };
-  const now = new Date();
-  const dateEl = document.getElementById('currentDate');
-  const timeEl = document.getElementById('currentTime');
-  if (dateEl) dateEl.textContent = now.toLocaleDateString('en-AU', optionsDate);
-  if (timeEl) {
-    let t = now.toLocaleTimeString('en-AU', optionsTime);
-    if (!/awst/i.test(t)) {
-      if (/(am|pm)/i.test(t)) t = t.replace(/(am|pm)/i, '$& AWST');
-      else t = t + ' AWST';
-    }
-    timeEl.textContent = t;
+  const clockDateEl = document.getElementById('currentDate');
+  const clockTimeEl = document.getElementById('currentTime');
+  if (clockDateEl && clockTimeEl) {
+    const now = new Date();
+    const options = { timeZone: 'Australia/Perth' };
+    clockDateEl.textContent = now.toLocaleDateString(
+      'en-AU',
+      { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', ...options }
+    );
+    // Minimal AWST suffix exactly like your original
+    clockTimeEl.textContent = now
+      .toLocaleTimeString('en-AU', { hour12: true, hour: 'numeric', minute: '2-digit', second: '2-digit', ...options })
+      .toLowerCase() + ' AWST';
   }
 }
 
-
-function setMainIdIfMissing() {
-  const main = document.querySelector('.main-content');
-  if (main && !main.id) main.id = 'main';
-}
-
-function initializeTooltips() {
-  document.addEventListener('mouseenter', (e) => {
-    const tgt = e.target;
-    const el = (tgt && typeof tgt.closest === 'function') ? tgt.closest('.tooltip') : null;
-    if (el) el.setAttribute('aria-expanded', 'true');
-  }, true);
-  document.addEventListener('mouseleave', (e) => {
-    const tgt = e.target;
-    const el = (tgt && typeof tgt.closest === 'function') ? tgt.closest('.tooltip') : null;
-    if (el) el.setAttribute('aria-expanded', 'false');
-  }, true);
-}
-
-function initializeScrollToTop() {
-  if (document.getElementById('scrollToTopBtn')) return;
-  const buttonHTML = `<a href="#" id="scrollToTopBtn" class="scroll-to-top-btn" title="Go to top"><i class="fas fa-chevron-up" aria-hidden="true"></i><span class="sr-only">Back to top</span></a>`;
-  document.body.insertAdjacentHTML('beforeend', buttonHTML);
-  const btn = document.getElementById('scrollToTopBtn');
-  if (!btn) return;
-  window.addEventListener('scroll', () => btn.classList.toggle('visible', window.scrollY > 300));
-  btn.addEventListener('click', (e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
-}
-
-
+/**
+ * Initializes contact page copy buttons.
+ * Keeps the icon; uses the tooltip text to show "Copied!" briefly.
+ */
 function initializeContactPage() {
-    document.querySelectorAll('.copy-btn').forEach(button => {
-        if (button.dataset.bound === '1') return;
-        button.dataset.bound = '1';
-        const tip = button.querySelector('.tooltip-text');
-        button.addEventListener('click', () => {
-            const text = button.dataset.copy || '';
-            navigator.clipboard.writeText(text)
-                .then(() => {
-                    if (tip) {
-                        const orig = tip.textContent;
-                        tip.textContent = 'Copied!';
-                        button.classList.add('copied');
-                        setTimeout(() => {
-                            tip.textContent = orig || 'Copy';
-                            button.classList.remove('copied');
-                        }, 1200);
-                    }
-                })
-                .catch(err => console.error('Failed to copy text: ', err));
-        });
+  document.querySelectorAll('.copy-btn').forEach(button => {
+    if (button.dataset.bound === '1') return;
+    button.dataset.bound = '1';
+    const tip = button.querySelector('.tooltip-text');
+    button.addEventListener('click', () => {
+      const text = button.dataset.copy || '';
+      navigator.clipboard.writeText(text)
+        .then(() => {
+          if (tip) {
+            const orig = tip.textContent;
+            tip.textContent = 'Copied!';
+            button.classList.add('copied');
+            setTimeout(() => {
+              tip.textContent = orig || 'Copy';
+              button.classList.remove('copied');
+            }, 1200);
+          }
+        })
+        .catch(err => console.error('Failed to copy text: ', err));
     });
+  });
 }
 
+/**
+ * --- FINAL, SIMPLIFIED TOOLTIP FIX ---
+ * The logic is now handled by the inline onclick in dashboard.js.
+ * This function just adds a global listener to close tooltips when clicking away.
+ */
+function initializeTooltips() {
+  document.addEventListener('click', (e) => {
+    // If the click is not on a tooltip wrapper, close all active tooltips
+    if (!e.target.closest('.tooltip-wrapper')) {
+      document.querySelectorAll('.tooltip-wrapper.is-active').forEach(wrapper => {
+        wrapper.classList.remove('is-active');
+      });
+    }
+  });
+}
 
+/**
+ * Locks required costs on the index page so they are always checked and cannot be unchecked.
+ * It matches by label text to avoid changing existing HTML.
+ */
+function lockRequiredCosts() {
+  const REQUIRED = ['Certificate III Course', 'Tools, PPE, White Card'];
+  const boxes = Array.from(document.querySelectorAll('input[type="checkbox"]'));
+  if (!boxes.length) return;
+
+  boxes.forEach(cb => {
+    const id = cb.id;
+    let label = null;
+    if (id) {
+      try { label = document.querySelector(`label[for="${CSS.escape(id)}"]`); }
+      catch { label = document.querySelector('label[for="' + id + '"]'); }
+    }
+    if (!label) {
+      label = cb.closest('label, .cost-item, li, .item, .form-check') || cb.parentElement;
+    }
+    const text = (label ? label.textContent : cb.closest('.cost-item')?.textContent || '').trim();
+    const mustLock = REQUIRED.some(name => text.includes(name));
+    if (!mustLock) return;
+
+    // Force checked
+    cb.checked = true;
+    cb.setAttribute('aria-checked', 'true');
+    cb.dataset.locked = 'true';
+
+    // Block unchecking by mouse/touch/keyboard
+    const enforce = (e) => {
+      if (cb.dataset.locked === 'true') {
+        e.preventDefault();
+        cb.checked = true;
+        cb.setAttribute('aria-checked', 'true');
+      }
+    };
+    cb.addEventListener('click', enforce, true);
+    cb.addEventListener('change', enforce, true);
+    cb.addEventListener('keydown', (e) => {
+      if (e.key === ' ' || e.key === 'Spacebar') enforce(e);
+    }, true);
+
+    // Prevent label click from toggling
+    if (label && label !== cb) {
+      label.addEventListener('click', (e) => { e.preventDefault(); }, true);
+    }
+
+    // Trigger recalculation if your app listens for change events
+    try { cb.dispatchEvent(new Event('change', { bubbles: true })); } catch {}
+  });
+}
+
+// Highlights the current page in the header + slide-out nav
+export function setActiveNavLink(currentPath = location.pathname) {
+  const normalize = (p) =>
+    (p || '')
+      .replace(location.origin, '')
+      .split(/[?#]/)[0]
+      .replace(/\/index\.html$/i, '/') || '/';
+
+  const current = normalize(currentPath);
+
+  const links = document.querySelectorAll(
+    'nav a, #navigation-menu a, header a[data-nav], .site-nav a'
+  );
+
+  links.forEach((a) => {
+    const href = a.getAttribute('href');
+    if (!href || href.startsWith('#') || href.startsWith('mailto:')) {
+      a.classList.remove('active', 'is-active');
+      a.removeAttribute('aria-current');
+      return;
+    }
+    let linkPath = href;
+    try { linkPath = new URL(href, location.origin).pathname; } catch {}
+    const link = normalize(linkPath);
+    const isActive = link === current || (link === '/' && current === '/');
+
+    a.classList.toggle('active', isActive);
+    a.classList.toggle('is-active', isActive);
+    if (isActive) a.setAttribute('aria-current', 'page');
+    else a.removeAttribute('aria-current');
+  });
+}
+
+/**
+ * The main UI initialization function.
+ */
 export function initializeUI() {
   initializeHeader();
   initializeTheme();
   initializeScrollToTop();
   initializeTooltips();
+
+  // Highlight current nav link on first load
+  setActiveNavLink();
+
+  // Lock required costs on the home page
+  lockRequiredCosts();
 
   if (document.getElementById('currentDate')) {
     updateClock();
