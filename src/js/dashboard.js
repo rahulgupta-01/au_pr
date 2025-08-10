@@ -106,17 +106,29 @@ export function initializeDashboard(milestones, costData, config) {
           renderPoints();
         });
       });
+      wrap.querySelectorAll('.tooltip-wrapper').forEach(wrapper => {
+        wrapper.addEventListener('click', (e) => {
+          document.querySelectorAll('.tooltip-wrapper.is-active').forEach(w => {
+            if (w !== wrapper) w.classList.remove('is-active');
+          });
+          wrapper.classList.toggle('is-active');
+        });
+      });
     }
   }
 
   function renderCosts() {
-    const totalBudget = 12500; // Adjust as needed
+    const totalBudget = costData.reduce((acc, item) => acc + item.amount, 0);
     let totalSpent = 0;
 
     elements.costTracker.innerHTML = costData.map(c => {
-      if (state.costs[c.id]) totalSpent += c.amount;
+      const isPaid = c.paid === true;
+      const isChecked = isPaid || !!state.costs[c.id];
+      if (isChecked) {
+        totalSpent += c.amount;
+      }
       return `<div class="cost-item">
-          <input type="checkbox" class="interactive-checkbox" id="cost_${escapeHTML(c.id)}" data-id="${escapeHTML(c.id)}" ${state.costs[c.id] ? 'checked' : ''}>
+          <input type="checkbox" class="interactive-checkbox" id="cost_${escapeHTML(c.id)}" data-id="${escapeHTML(c.id)}" ${isChecked ? 'checked' : ''} ${isPaid ? 'disabled' : ''}>
           <label for="cost_${escapeHTML(c.id)}">${escapeHTML(c.label)}</label>
           <span>${formatCurrency(c.amount)}</span>
         </div>`;
@@ -129,7 +141,7 @@ export function initializeDashboard(milestones, costData, config) {
 
     const wrap = D('cost-tracker');
     if (wrap) {
-      wrap.querySelectorAll('.interactive-checkbox').forEach(box => {
+      wrap.querySelectorAll('.interactive-checkbox:not(:disabled)').forEach(box => {
         box.addEventListener('change', (e) => {
           const id = e.target.dataset.id;
           state.costs[id] = !!e.target.checked;
@@ -201,8 +213,12 @@ export function initializeDashboard(milestones, costData, config) {
   function initializeResetButtons() {
     const handleReset = () => {
       if (confirm('Are you sure you want to reset your dashboard data?')) {
-        try { localStorage.removeItem('prDashboardState'); } catch {}
-        location.reload();
+        state.points = {};
+        state.costs = {};
+        saveState();
+        renderPoints();
+        renderCosts();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     };
     const resetBtn1 = D('resetDataBtn');

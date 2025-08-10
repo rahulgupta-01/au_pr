@@ -17,7 +17,6 @@ const MAIN_SELECTOR = '.main-content';
 function normalizePath(href) {
   const url = new URL(href, window.location.origin);
   let path = url.pathname;
-  // collapse repeated slashes and strip trailing (except root)
   path = path.replace(/\/{2,}/g, '/');
   if (path.length > 1 && path.endsWith('/')) path = path.slice(0, -1);
   return path || '/';
@@ -41,7 +40,6 @@ async function render(path) {
   }
 
   try {
-    // Relative fetch so it works under sub-path deployments as well
     const res = await fetch(route.file, { credentials: 'same-origin' });
     if (!res.ok) throw new Error('Failed to fetch page');
     const html = await res.text();
@@ -49,30 +47,29 @@ async function render(path) {
     const newMain = doc.querySelector(MAIN_SELECTOR);
     if (!newMain) throw new Error('Malformed page: missing main content');
 
-    // Swap main content
     container.innerHTML = newMain.innerHTML;
 
-    // Update document title and header h1
     document.title = doc.title || `🇦🇺 Australian PR Journey | ${route.title}`;
     const headerTitle = document.getElementById('page-title');
     if (headerTitle) headerTitle.textContent = route.title;
 
-    // Update active nav
     setActiveNavLink(path);
 
-    // Focus management: move focus to first heading
+    // FIX: Focus management for accessibility without the visual highlight
     const focusTarget = container.querySelector('h1, h2, [role="heading"]');
     if (focusTarget) {
       focusTarget.setAttribute('tabindex', '-1');
-      focusTarget.focus();
+      focusTarget.classList.add('programmatic-focus');
+      focusTarget.focus({ preventScroll: true });
+      setTimeout(() => {
+        focusTarget.classList.remove('programmatic-focus');
+      }, 100);
     }
 
-    // Run page-specific scripts
     if (typeof window.__afterRoute === 'function') {
       window.__afterRoute(path);
     }
 
-    // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (err) {
     console.error(err);
@@ -87,7 +84,6 @@ export function initializeRouter(onAfterRender) {
     const link = e.target.closest('a[href]');
     if (!link) return;
     const rawHref = link.getAttribute('href') || '';
-    // Allow hash-only and same-page hash links to behave normally
     if (rawHref.startsWith('#')) return;
     const tmp = new URL(rawHref, window.location.origin);
     if (tmp.hash && tmp.pathname === window.location.pathname) return;
@@ -104,6 +100,5 @@ export function initializeRouter(onAfterRender) {
     render(normalizePath(location.pathname));
   });
 
-  // Initial render
   render(normalizePath(location.pathname));
 }
