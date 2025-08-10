@@ -27,10 +27,12 @@ export default defineConfig({
     // 2. Add and configure the plugin
     viteStaticCopy({
       targets: [
-        {
-          src: 'data', // Path to the folder in 'src'
-          dest: '.'    // Destination in the 'dist' folder ('.' means the root)
-        }
+        { src: 'data', dest: '.' },
+        { src: 'assets', dest: '.' },
+        { src: 'images', dest: '.' },
+        { src: 'sw.js', dest: '.' },
+        { src: 'robots.txt', dest: '.' },
+        { src: 'sitemap.xml', dest: '.' }
       ]
     })
   ],

@@ -641,6 +641,8 @@ input:checked+.slider:before {
 }
 
 .copy-btn .tooltip-text {
+    white-space: nowrap;
+    pointer-events: none;
     visibility: hidden;
     background-color: var(--success-color);
     color: #fff;
@@ -1294,3 +1296,36 @@ body.dark-mode .scroll-to-top-btn {
         grid-template-columns: 1fr;
     }
 }
+
+/* Fix: visible focus ring for header home & hamburger */
+.header-home-link:focus-visible,
+#hamburger-menu:focus-visible,
+.hamburger-menu:focus-visible {
+  outline: 3px solid var(--secondary-color);
+  outline-offset: 2px;
+  border-radius: 8px;
+  box-shadow: 0 0 0 3px rgba(24, 86, 212, 0.15);
+}
+body.dark-mode .header-home-link:focus-visible,
+body.dark-mode #hamburger-menu:focus-visible,
+body.dark-mode .hamburger-menu:focus-visible {
+  outline: 3px solid var(--secondary-color);
+  box-shadow: 0 0 0 3px rgba(24, 86, 212, 0.25);
+}
+\n
+/* Overlay for slide-out menu */
+#overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease;
+  z-index: 1040; /* below menu, above page */
+}
+#overlay.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#navigation-menu.is-open { z-index: 1050; }
