@@ -202,6 +202,69 @@ function updateCopyrightYear() {
   }
 }
 
+// New: PWA Update Notification
+function listenForSWUpdates() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.addEventListener('message', event => {
+      if (event.data && event.data.type === 'SW_UPDATED') {
+        showUpdateToast();
+      }
+    });
+  }
+}
+
+function showUpdateToast() {
+  const toast = document.createElement('div');
+  toast.id = 'update-toast';
+  toast.className = 'update-toast';
+  toast.innerHTML = `
+    <span>A new version is available!</span>
+    <button id="reload-button" class="toast-button">Reload</button>
+  `;
+  document.body.appendChild(toast);
+
+  document.getElementById('reload-button').addEventListener('click', () => {
+    window.location.reload();
+  });
+
+  // Add styles for the toast
+  const style = document.createElement('style');
+  style.textContent = `
+    .update-toast {
+      position: fixed;
+      bottom: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--primary-darker);
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: var(--border-radius-md);
+      box-shadow: var(--shadow-medium);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: bottom 0.5s ease-in-out;
+    }
+    .toast-button {
+      background-color: var(--secondary-color);
+      color: var(--primary-darker);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Animate the toast in
+  setTimeout(() => {
+    toast.style.bottom = '20px';
+  }, 100);
+}
+
+
 /**
  * The main UI initialization function.
  */
@@ -211,6 +274,7 @@ export function initializeUI() {
   initializeScrollToTop();
   initializeTooltips();
   updateCopyrightYear();
+  listenForSWUpdates(); // Add this call
 
   if (document.getElementById('currentDate')) {
     updateClock();

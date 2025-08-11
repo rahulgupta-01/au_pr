@@ -26,14 +26,23 @@ function showConfigError() {
   document.head.appendChild(style);
 }
 
+// New: Generic error boundary for fatal errors
+function showErrorBoundary(message) {
+  const container = document.querySelector('.main-content');
+  if (container) {
+    container.innerHTML = `<div class="card"><div class="card-header"><i class="fas fa-exclamation-triangle"></i> Application Error</div><p>${message}</p></div>`;
+    container.classList.remove('fade-out');
+  }
+}
+
 async function fetchConfig() {
   try {
     const res = await fetch('data/config.json', { credentials: 'same-origin' });
-    if (!res.ok) throw new Error('Failed to load config');
+    if (!res.ok) throw new Error(`Failed to load config: ${res.statusText}`);
     return await res.json();
   } catch (e) {
     console.error('Config load failed, falling back to defaults', e);
-    showConfigError(); // Display the error banner to the user
+    showConfigError(); // Display the non-fatal error banner to the user
     return {
       userDOB: '2001-05-18',
       journeyStartDate: '2025-02-15',
@@ -46,37 +55,42 @@ async function fetchConfig() {
 }
 
 async function initializeApp() {
-  // PWA: register service worker only in production, and unregister in dev
-  if ('serviceWorker' in navigator) {
-    if (import.meta && import.meta.env && import.meta.env.PROD) {
-      try { await navigator.serviceWorker.register('/sw.js'); } catch {}
-    } else {
-      try {
-        const regs = await navigator.serviceWorker.getRegistrations();
-        for (const r of regs) { await r.unregister().catch(()=>{}); }
-      } catch {}
+  try {
+    // PWA: register service worker only in production, and unregister in dev
+    if ('serviceWorker' in navigator) {
+      if (import.meta && import.meta.env && import.meta.env.PROD) {
+        try { await navigator.serviceWorker.register('/sw.js'); } catch {}
+      } else {
+        try {
+          const regs = await navigator.serviceWorker.getRegistrations();
+          for (const r of regs) { await r.unregister().catch(()=>{}); }
+        } catch {}
+      }
     }
-  }
 
-  initializeUI();
-
-  const config = await fetchConfig();
-  const { milestones, costData } = await loadJourneyData(config);
-
-  const runPageScripts = (path) => {
     initializeUI();
-    if (document.querySelector('.key-metrics-panel')) {
-      initializeDashboard(milestones, costData, config);
-    }
-    if (document.getElementById('timeline')) {
-      initializeTimeline(milestones);
-    }
-    if (document.querySelector('.document-table')) {
-      initializeDocumentsPage();
-    }
-  };
 
-  initializeRouter(runPageScripts);
+    const config = await fetchConfig();
+    const { milestones, costData } = await loadJourneyData(config);
+
+    const runPageScripts = (path) => {
+      initializeUI();
+      if (document.querySelector('.key-metrics-panel')) {
+        initializeDashboard(milestones, costData, config);
+      }
+      if (document.getElementById('timeline')) {
+        initializeTimeline(milestones);
+      }
+      if (document.querySelector('.document-table')) {
+        initializeDocumentsPage();
+      }
+    };
+
+    initializeRouter(runPageScripts);
+  } catch (error) {
+    console.error('Fatal error during application initialization:', error);
+    showErrorBoundary('Could not load the application due to a critical error. Please try refreshing the page.');
+  }
 }
 
 // Start the application once the DOM is ready

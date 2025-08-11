@@ -1,5 +1,27 @@
 import { todayForCalculations, calcDays, escapeHTML } from './utils.js';
 
+// New: Milestone Notification Function
+function checkUpcomingMilestones(milestones) {
+  const upcoming = milestones.filter(m => {
+    const daysUntil = calcDays(todayForCalculations, new Date(m.date));
+    return daysUntil > 0 && daysUntil <= 7;
+  });
+
+  if (upcoming.length > 0 && 'Notification' in window && Notification.permission !== 'denied') {
+    Notification.requestPermission().then(permission => {
+      if (permission === 'granted') {
+        upcoming.forEach(m => {
+          const days = calcDays(todayForCalculations, new Date(m.date));
+          new Notification('Upcoming PR Milestone', {
+            body: `${m.title} is in ${days} day(s).`,
+            icon: '/assets/android-chrome-192x192.png'
+          });
+        });
+      }
+    });
+  }
+}
+
 export function initializeDashboard(milestones, costData, config) {
   const dashboardContainer = document.querySelector('.main-content');
   if (!dashboardContainer) return;
@@ -65,8 +87,11 @@ export function initializeDashboard(milestones, costData, config) {
 
   function getPointsData() {
     const age = calculateAge(config.userDOB);
-    const birthday25 = new Date(config.userDOB);
-    birthday25.setFullYear(birthday25.getFullYear() + 25);
+    const dob = new Date(config.userDOB);
+    const year25 = dob.getFullYear() + 25;
+    const month = dob.getMonth();
+    const day = dob.getDate();
+    const birthday25 = new Date(year25, month, day);
 
     const jrpCompletionMilestone = milestones.find(m => m.id === 'jrp_complete');
     const workExpAchievedDate = jrpCompletionMilestone ? jrpCompletionMilestone.date : null;
@@ -249,4 +274,11 @@ export function initializeDashboard(milestones, costData, config) {
   updateMetrics();
   updateAlerts();
   initializeResetButtons();
+  checkUpcomingMilestones(milestones); // Add this call at the end
+  
+  // New: Remove skeletons and show content after initialization
+  dashboardContainer.querySelectorAll('.skeleton-item').forEach(el => el.remove());
+  dashboardContainer.querySelectorAll('.metric-item, #points-breakdown > *, #cost-tracker > *').forEach(el => {
+    if(el.style.display === 'none') el.style.display = '';
+  });
 }

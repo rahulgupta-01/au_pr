@@ -19,9 +19,14 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then(keys => Promise.all(keys.map(k => {
       if (![CACHE_NAME, DATA_CACHE].includes(k)) return caches.delete(k);
-    })))
+    }))).then(() => {
+      // Notify clients that a new version is available
+      self.clients.claim();
+      self.clients.matchAll().then(clients => {
+        clients.forEach(client => client.postMessage({ type: 'SW_UPDATED' }));
+      });
+    })
   );
-  self.clients.claim();
 });
 
 self.addEventListener('fetch', (event) => {
