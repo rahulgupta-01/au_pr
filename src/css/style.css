@@ -1144,6 +1144,12 @@ input:checked+.slider:before {
   font-size: 0.9rem;
 }
 
+.social-grid .contact-item .contact-info-link {
+    display: flex; 
+    align-items: center; 
+    gap: 0.75rem; 
+    flex-grow: 1;
+}
 
 /* ==========================================================================
    8. Dark Mode Overrides
@@ -1306,6 +1312,17 @@ body.dark-mode .scroll-to-top-btn {
     gap: 5px;
     white-space: normal;
     text-align: center;
+  }
+  .card-header {
+    justify-content: flex-start; /* Aligns header items to the start */
+  }
+
+  .contact-info span {
+    word-break: break-all; /* Prevents long text like emails from overflowing */
+  }
+
+  .contact-item {
+    flex-wrap: wrap; /* Allows items (like the copy button) to wrap if needed */
   }
   .document-table thead {
     display: none;
