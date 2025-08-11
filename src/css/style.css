@@ -1329,7 +1329,9 @@ body.dark-mode .scroll-to-top-btn {
   }
 
   .contact-info span {
-    word-break: break-all; /* Prevents long text like emails from overflowing */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .contact-item {

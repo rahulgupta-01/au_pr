@@ -1,7 +1,7 @@
 import { loadJourneyData } from './data.js';
 import { initializeDashboard } from './dashboard.js';
 import { initializeTimeline } from './timeline.js';
-import { initializeUI } from './ui.js';
+import { initializeUI, showUpdateToast } from './ui.js';
 import { initializeRouter } from './router.js';
 import { initializeDocumentsPage } from './documents.js';
 
@@ -11,7 +11,6 @@ function showConfigError() {
   errorBanner.textContent = '⚠️ Could not load live configuration. Displaying default data. Some information may be outdated.';
   document.body.prepend(errorBanner);
   
-  // Basic styling for the banner
   const style = document.createElement('style');
   style.textContent = `
     .config-error-banner {
@@ -26,7 +25,6 @@ function showConfigError() {
   document.head.appendChild(style);
 }
 
-// New: Generic error boundary for fatal errors
 function showErrorBoundary(message) {
   const container = document.querySelector('.main-content');
   if (container) {
@@ -42,7 +40,7 @@ async function fetchConfig() {
     return await res.json();
   } catch (e) {
     console.error('Config load failed, falling back to defaults', e);
-    showConfigError(); // Display the non-fatal error banner to the user
+    showConfigError();
     return {
       userDOB: '2001-05-18',
       journeyStartDate: '2025-02-15',
@@ -56,11 +54,26 @@ async function fetchConfig() {
 
 async function initializeApp() {
   try {
-    // PWA: register service worker only in production, and unregister in dev
     if ('serviceWorker' in navigator) {
       if (import.meta && import.meta.env && import.meta.env.PROD) {
-        try { await navigator.serviceWorker.register('/sw.js'); } catch {}
+        // Register the service worker
+        const registration = await navigator.serviceWorker.register('/sw.js');
+
+        // This is the robust way to detect updates.
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          if (newWorker) {
+            newWorker.addEventListener('statechange', () => {
+              // The new worker has successfully installed and is waiting to activate.
+              // We check for `navigator.serviceWorker.controller` to ensure this isn't the first install.
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                showUpdateToast();
+              }
+            });
+          }
+        });
       } else {
+        // Unregister any active service workers in development mode.
         try {
           const regs = await navigator.serviceWorker.getRegistrations();
           for (const r of regs) { await r.unregister().catch(()=>{}); }
@@ -93,5 +106,4 @@ async function initializeApp() {
   }
 }
 
-// Start the application once the DOM is ready
 document.addEventListener('DOMContentLoaded', initializeApp);

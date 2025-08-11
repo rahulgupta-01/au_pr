@@ -13,6 +13,8 @@ function initializeHeader() {
     if (navMenu) {
       navMenu.classList.add('is-open');
       navMenu.removeAttribute('inert');
+      // Set aria-hidden to false so screen readers can access the menu
+      navMenu.setAttribute('aria-hidden', 'false');
     }
     if (overlay) overlay.classList.add('is-visible');
 
@@ -66,19 +68,22 @@ export function closeMenu() {
   const overlay = document.getElementById('overlay');
   const openingElement = document.querySelector('.hamburger-menu');
 
-  document.body.classList.remove('menu-is-open');
-  if (navMenu) {
-    navMenu.classList.remove('is-open');
-    navMenu.setAttribute('inert', '');
-  }
-  if (overlay) overlay.classList.remove('is-visible');
-
-  // Return focus to the element that opened the menu
+  // **THE FIX:** Move focus back to the opening element BEFORE hiding the menu.
   if (openingElement) {
     openingElement.classList.add('programmatic-focus');
     openingElement.focus();
     setTimeout(() => openingElement.classList.remove('programmatic-focus'), 100);
   }
+  
+  // Now that focus is safe, hide the menu and overlay.
+  document.body.classList.remove('menu-is-open');
+  if (navMenu) {
+    navMenu.classList.remove('is-open');
+    navMenu.setAttribute('inert', '');
+    // Set aria-hidden to true so screen readers ignore the closed menu
+    navMenu.setAttribute('aria-hidden', 'true');
+  }
+  if (overlay) overlay.classList.remove('is-visible');
 }
 
 function initializeTheme() {
@@ -202,34 +207,30 @@ function updateCopyrightYear() {
   }
 }
 
-// New: PWA Update Notification
-function listenForSWUpdates() {
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.addEventListener('message', event => {
-      if (event.data && event.data.type === 'SW_UPDATED') {
-        showUpdateToast();
-      }
+// Exported for use in main.js
+export function showUpdateToast() {
+    if (document.getElementById('update-toast')) return;
+
+    const toast = document.createElement('div');
+    toast.id = 'update-toast';
+    toast.className = 'update-toast';
+    toast.innerHTML = `
+        <span>A new version is available!</span>
+        <button id="reload-button" class="toast-button">Reload</button>
+        <button id="close-toast-button" class="toast-close-button" aria-label="Close">&times;</button>
+    `;
+    document.body.appendChild(toast);
+
+    document.getElementById('reload-button').addEventListener('click', () => {
+        window.location.reload();
     });
-  }
-}
 
-function showUpdateToast() {
-  const toast = document.createElement('div');
-  toast.id = 'update-toast';
-  toast.className = 'update-toast';
-  toast.innerHTML = `
-    <span>A new version is available!</span>
-    <button id="reload-button" class="toast-button">Reload</button>
-  `;
-  document.body.appendChild(toast);
+    document.getElementById('close-toast-button').addEventListener('click', () => {
+        toast.remove();
+    });
 
-  document.getElementById('reload-button').addEventListener('click', () => {
-    window.location.reload();
-  });
-
-  // Add styles for the toast
-  const style = document.createElement('style');
-  style.textContent = `
+    const style = document.createElement('style');
+    style.textContent = `
     .update-toast {
       position: fixed;
       bottom: -100px;
@@ -255,15 +256,22 @@ function showUpdateToast() {
       font-weight: bold;
       cursor: pointer;
     }
+    .toast-close-button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0 0.5rem;
+    }
   `;
-  document.head.appendChild(style);
+    document.head.appendChild(style);
 
-  // Animate the toast in
-  setTimeout(() => {
-    toast.style.bottom = '20px';
-  }, 100);
+    setTimeout(() => {
+        toast.style.bottom = '20px';
+    }, 100);
 }
-
 
 /**
  * The main UI initialization function.
@@ -274,7 +282,6 @@ export function initializeUI() {
   initializeScrollToTop();
   initializeTooltips();
   updateCopyrightYear();
-  listenForSWUpdates(); // Add this call
 
   if (document.getElementById('currentDate')) {
     updateClock();

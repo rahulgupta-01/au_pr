@@ -12,27 +12,20 @@ const SHELL_ASSETS = [
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(SHELL_ASSETS)));
-  self.skipWaiting();
+  // self.skipWaiting(); // REMOVED: We want the new worker to wait.
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then(keys => Promise.all(keys.map(k => {
       if (![CACHE_NAME, DATA_CACHE].includes(k)) return caches.delete(k);
-    }))).then(() => {
-      // Notify clients that a new version is available
-      self.clients.claim();
-      self.clients.matchAll().then(clients => {
-        clients.forEach(client => client.postMessage({ type: 'SW_UPDATED' }));
-      });
-    })
+    }))).then(() => self.clients.claim())
   );
 });
 
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   if (url.pathname.startsWith('/data/')) {
-    // Stale-while-revalidate for JSON
     event.respondWith((async () => {
       const cache = await caches.open(DATA_CACHE);
       const cached = await cache.match(event.request);
@@ -44,7 +37,6 @@ self.addEventListener('fetch', (event) => {
     })());
     return;
   }
-  // Cache-first for shell
   event.respondWith(
     caches.match(event.request).then(cached => cached || fetch(event.request))
   );
