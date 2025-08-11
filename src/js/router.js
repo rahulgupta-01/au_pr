@@ -32,49 +32,58 @@ async function render(path) {
   const container = document.querySelector(MAIN_SELECTOR);
   if (!container) return;
 
-  if (!route) {
-    container.innerHTML = `<div class="card"><div class="card-header"><i class="fas fa-exclamation-triangle"></i> Page not found</div><p>We couldn't find <code>${path}</code>. Try the Dashboard.</p></div>`;
-    setActiveNavLink('/');
-    document.title = 'Not Found | Australian PR Journey';
-    return;
-  }
+  // Fade out current content
+  container.classList.add('fade-out');
 
-  try {
-    const res = await fetch(route.file, { credentials: 'same-origin' });
-    if (!res.ok) throw new Error('Failed to fetch page');
-    const html = await res.text();
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    const newMain = doc.querySelector(MAIN_SELECTOR);
-    if (!newMain) throw new Error('Malformed page: missing main content');
-
-    container.innerHTML = newMain.innerHTML;
-
-    document.title = doc.title || `🇦🇺 Australian PR Journey | ${route.title}`;
-    const headerTitle = document.getElementById('page-title');
-    if (headerTitle) headerTitle.textContent = route.title;
-
-    setActiveNavLink(path);
-
-    // FIX: Focus management for accessibility without the visual highlight
-    const focusTarget = container.querySelector('h1, h2, [role="heading"]');
-    if (focusTarget) {
-      focusTarget.setAttribute('tabindex', '-1');
-      focusTarget.classList.add('programmatic-focus');
-      focusTarget.focus({ preventScroll: true });
-      setTimeout(() => {
-        focusTarget.classList.remove('programmatic-focus');
-      }, 100);
+  // Wait for fade-out to finish before loading new content
+  setTimeout(async () => {
+    if (!route) {
+      container.innerHTML = `<div class="card"><div class="card-header"><i class="fas fa-exclamation-triangle"></i> Page not found</div><p>We couldn't find <code>${path}</code>. Try the Dashboard.</p></div>`;
+      setActiveNavLink('/');
+      document.title = 'Not Found | Australian PR Journey';
+      container.classList.remove('fade-out'); // Fade back in
+      return;
     }
 
-    if (typeof window.__afterRoute === 'function') {
-      window.__afterRoute(path);
-    }
+    try {
+      const res = await fetch(route.file, { credentials: 'same-origin' });
+      if (!res.ok) throw new Error('Failed to fetch page');
+      const html = await res.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const newMain = doc.querySelector(MAIN_SELECTOR);
+      if (!newMain) throw new Error('Malformed page: missing main content');
 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  } catch (err) {
-    console.error(err);
-    container.innerHTML = `<div class="card"><div class="card-header"><i class="fas fa-wifi"></i> Network error</div><p>We couldn't load this page. Please try again.</p></div>`;
-  }
+      container.innerHTML = newMain.innerHTML;
+
+      document.title = doc.title || `🇦🇺 Australian PR Journey | ${route.title}`;
+      const headerTitle = document.getElementById('page-title');
+      if (headerTitle) headerTitle.textContent = route.title;
+
+      setActiveNavLink(path);
+
+      // Focus management for accessibility
+      const focusTarget = container.querySelector('h1, h2, [role="heading"]');
+      if (focusTarget) {
+        focusTarget.setAttribute('tabindex', '-1');
+        focusTarget.classList.add('programmatic-focus');
+        focusTarget.focus({ preventScroll: true });
+        setTimeout(() => {
+          focusTarget.classList.remove('programmatic-focus');
+        }, 100);
+      }
+
+      if (typeof window.__afterRoute === 'function') {
+        window.__afterRoute(path);
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+      console.error(err);
+      container.innerHTML = `<div class="card"><div class="card-header"><i class="fas fa-wifi"></i> Network error</div><p>We couldn't load this page. Please try again.</p></div>`;
+    } finally {
+      container.classList.remove('fade-out'); // Fade in new content
+    }
+  }, 300); // Match this timeout with the CSS transition duration
 }
 
 export function initializeRouter(onAfterRender) {
@@ -92,6 +101,8 @@ export function initializeRouter(onAfterRender) {
     closeMenu();
 
     const path = normalizePath(link.getAttribute('href'));
+    if (path === normalizePath(location.pathname)) return; // Don't re-render same page
+
     history.pushState({}, '', path);
     render(path);
   });

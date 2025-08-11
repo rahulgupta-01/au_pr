@@ -12,9 +12,10 @@ function renderTimeline(milestones, filter = 'all') {
         const milestoneDate = new Date(m.date + "T00:00:00");
         const isCompleted = milestoneDate <= todayForCalculations;
         const displayDate = milestoneDate.toLocaleDateString('en-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Australia/Perth' });
+        // The details are now rendered directly in a div that is initially hidden by CSS
         return `
             <div class="milestone" data-phase="${m.phase}">
-                <div class="milestone-header" data-id="${m.id}">
+                <div class="milestone-header" role="button" tabindex="0" data-id="${m.id}" aria-expanded="false" aria-controls="details_${m.id}">
                     <div class="milestone-icon ${isCompleted ? 'completed' : 'future'}">
                         <i class="fas fa-${isCompleted ? 'check' : 'hourglass-start'}"></i>
                     </div>
@@ -28,11 +29,21 @@ function renderTimeline(milestones, filter = 'all') {
     }).join('');
 
     document.querySelectorAll('.milestone-header').forEach(header => {
-        header.addEventListener('click', (e) => {
+        const action = (e) => {
             const detailsEl = document.getElementById(`details_${e.currentTarget.dataset.id}`);
-            detailsEl.classList.toggle('visible');
-            if (detailsEl.classList.contains('visible')) {
+            const isExpanded = detailsEl.classList.toggle('visible');
+            e.currentTarget.setAttribute('aria-expanded', isExpanded);
+
+            if (isExpanded) {
                 e.currentTarget.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        };
+
+        header.addEventListener('click', action);
+        header.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                action(e);
             }
         });
     });
@@ -42,10 +53,19 @@ export function initializeTimeline(milestones) {
     renderTimeline(milestones);
     const toggleBtnGroup = document.querySelector('.toggle-btn-group');
     if (toggleBtnGroup) {
+        // Set initial aria-pressed state
+        toggleBtnGroup.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.setAttribute('aria-pressed', btn.classList.contains('active') ? 'true' : 'false');
+        });
+
         toggleBtnGroup.addEventListener('click', (e) => {
             if (e.target.tagName === 'BUTTON') {
-                document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.toggle-btn').forEach(btn => {
+                  btn.classList.remove('active');
+                  btn.setAttribute('aria-pressed', 'false');
+                });
                 e.target.classList.add('active');
+                e.target.setAttribute('aria-pressed', 'true');
                 renderTimeline(milestones, e.target.dataset.phase);
             }
         });

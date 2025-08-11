@@ -10,7 +10,7 @@
         <div class="card key-metrics-panel">
           <div class="metric-item">
             <div class="metric-header">
-              <i class="fas fa-calendar-times"></i> Days to Visa Expiry
+              <i class="fas fa-calendar-times" aria-hidden="true"></i> Days to Visa Expiry
             </div>
             <div class="metric-value" id="daysRemaining">0</div>
             <div class="metric-detail" id="visaStatus">Loading...</div>
@@ -20,17 +20,17 @@
           </div>
           <div class="metric-item">
             <div class="metric-header">
-              <i class="fas fa-check-double"></i> Points Status
+              <i class="fas fa-check-double" aria-hidden="true"></i> Points Status
             </div>
             <div class="metric-value" id="currentPoints">0</div>
-            <div class="metric-detail">Target: 95</div>
+            <div class="metric-detail" id="pointsTargetDisplay">Loading...</div>
             <div class="progress-indicator">
               <div class="progress-fill" id="pointsProgress" style="background: var(--success-color);"></div>
             </div>
           </div>
           <div class="metric-item">
             <div class="metric-header">
-              <i class="fas fa-wallet"></i> Investment
+              <i class="fas fa-wallet" aria-hidden="true"></i> Investment
             </div>
             <div class="metric-value" id="totalSpentDisplay">$0</div>
             <div class="metric-detail" id="totalBudgetDisplay">Budget: $0</div>
@@ -40,7 +40,7 @@
           </div>
           <div class="metric-item">
             <div class="metric-header">
-              <i class="fas fa-flag-checkered"></i> Next Milestone In
+              <i class="fas fa-flag-checkered" aria-hidden="true"></i> Next Milestone In
             </div>
             <div class="metric-value" id="nextMilestoneCountdown">0</div>
             <div class="metric-detail" id="nextMilestoneTitle">Loading...</div>
@@ -53,7 +53,7 @@
           <div class="card">
             <div class="card-header">
               <span>
-                <i class="fas fa-calculator"></i>PR Points Calculator </span>
+                <i class="fas fa-calculator" aria-hidden="true"></i>PR Points Calculator </span>
               <button id="resetDataBtn" class="reset-btn" title="Reset to Default">
                 <i class="fas fa-undo"></i>
               </button>
@@ -69,7 +69,7 @@
           <div class="card">
             <div class="card-header">
               <span>
-                <i class="fas fa-dollar-sign"></i>Investment Tracker </span>
+                <i class="fas fa-dollar-sign" aria-hidden="true"></i>Investment Tracker </span>
               <button id="resetDataBtn2" class="reset-btn" title="Reset to Default">
                 <i class="fas fa-undo"></i>
               </button>
@@ -86,13 +86,13 @@
         <div class="dual-column-layout">
           <div class="card" id="alertsContainerCard">
             <div class="card-header">
-              <i class="fas fa-bullhorn"></i>Status & Reminders
+              <i class="fas fa-bullhorn" aria-hidden="true"></i>Status & Reminders
             </div>
             <div id="alertsContainer"></div>
           </div>
           <div class="card">
             <div class="card-header">
-              <i class="fas fa-link"></i>Key Resources
+              <i class="fas fa-link" aria-hidden="true"></i>Key Resources
             </div>
             <ul class="key-links-list">
               <li>

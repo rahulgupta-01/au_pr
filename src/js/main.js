@@ -3,6 +3,28 @@ import { initializeDashboard } from './dashboard.js';
 import { initializeTimeline } from './timeline.js';
 import { initializeUI } from './ui.js';
 import { initializeRouter } from './router.js';
+import { initializeDocumentsPage } from './documents.js';
+
+function showConfigError() {
+  const errorBanner = document.createElement('div');
+  errorBanner.className = 'config-error-banner';
+  errorBanner.textContent = '⚠️ Could not load live configuration. Displaying default data. Some information may be outdated.';
+  document.body.prepend(errorBanner);
+  
+  // Basic styling for the banner
+  const style = document.createElement('style');
+  style.textContent = `
+    .config-error-banner {
+      background-color: #D32F2F;
+      color: white;
+      text-align: center;
+      padding: 0.75rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+  `;
+  document.head.appendChild(style);
+}
 
 async function fetchConfig() {
   try {
@@ -11,6 +33,7 @@ async function fetchConfig() {
     return await res.json();
   } catch (e) {
     console.error('Config load failed, falling back to defaults', e);
+    showConfigError(); // Display the error banner to the user
     return {
       userDOB: '2001-05-18',
       journeyStartDate: '2025-02-15',
@@ -47,6 +70,9 @@ async function initializeApp() {
     }
     if (document.getElementById('timeline')) {
       initializeTimeline(milestones);
+    }
+    if (document.querySelector('.document-table')) {
+      initializeDocumentsPage();
     }
   };
 

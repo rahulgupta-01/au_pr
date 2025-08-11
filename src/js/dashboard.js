@@ -24,11 +24,13 @@ export function initializeDashboard(milestones, costData, config) {
     nextMilestoneTitle: D('nextMilestoneTitle'),
     milestoneProgress: D('milestoneProgress'),
     alertsContainer: D('alertsContainer'),
+    pointsTargetDisplay: D('pointsTargetDisplay'),
   };
 
   function saveState() {
     try { localStorage.setItem('prDashboardState', JSON.stringify(state)); } catch {}
   }
+
   function loadState() {
     try {
       const saved = JSON.parse(localStorage.getItem('prDashboardState') || '{}');
@@ -39,6 +41,18 @@ export function initializeDashboard(milestones, costData, config) {
     }
   }
 
+  // Helper function to handle checkbox interactions
+  function addCheckboxListeners(container, stateKey, renderFn) {
+    container.querySelectorAll('.interactive-checkbox:not(:disabled)').forEach(box => {
+      box.addEventListener('change', (e) => {
+        const id = e.target.dataset.id;
+        state[stateKey][id] = !!e.target.checked;
+        saveState();
+        renderFn();
+      });
+    });
+  }
+  
   const formatCurrency = (val) => new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD', minimumFractionDigits: 0 }).format(val);
 
   const calculateAge = (dob) => {
@@ -61,9 +75,8 @@ export function initializeDashboard(milestones, costData, config) {
       {
         id: 'age', label: 'Age', points: 30, currentPoints: age < 25 ? 25 : 30,
         achievedDate: age >= 25 ? birthday25.toISOString().slice(0,10) : null,
-        tooltip: 'Points based on age at time of invitation.'
-      },
-      { id: 'english', label: 'Superior English', points: 20, currentPoints: 10, tooltip: 'Superior (IELTS 8 or PTE 79+) vs Proficient.' },
+        tooltip: 'Points based on age at time of invitation.' },
+      { id: 'english', label: 'Superior English', points: 20, currentPoints: 10, tooltip: 'Superior (e.g., IELTS 8 or equivalent in each PTE component) vs Proficient.' },
       { id: 'work_exp', label: '1 Year Aus Work Exp', points: 5, currentPoints: 0, achievedDate: workExpAchievedDate, tooltip: 'Achieved after completing the 12-month Job Ready Program.' },
       { id: 'degree', label: 'Bachelor Degree', points: 15, currentPoints: 15, initial: true, tooltip: 'Points for your Bachelor of IT degree from Griffith University.' },
       { id: 'study_req', label: 'Australian Study Req', points: 5, currentPoints: 5, initial: true, tooltip: 'Two academic years of study in Australia.' },
@@ -98,14 +111,7 @@ export function initializeDashboard(milestones, costData, config) {
 
     const wrap = D('points-breakdown');
     if (wrap) {
-      wrap.querySelectorAll('.interactive-checkbox:not(:disabled)').forEach(box => {
-        box.addEventListener('change', (e) => {
-          const id = e.target.dataset.id;
-          state.points[id] = !!e.target.checked;
-          saveState();
-          renderPoints();
-        });
-      });
+      addCheckboxListeners(wrap, 'points', renderPoints);
       wrap.querySelectorAll('.tooltip-wrapper').forEach(wrapper => {
         wrapper.addEventListener('click', (e) => {
           document.querySelectorAll('.tooltip-wrapper.is-active').forEach(w => {
@@ -141,14 +147,7 @@ export function initializeDashboard(milestones, costData, config) {
 
     const wrap = D('cost-tracker');
     if (wrap) {
-      wrap.querySelectorAll('.interactive-checkbox:not(:disabled)').forEach(box => {
-        box.addEventListener('change', (e) => {
-          const id = e.target.dataset.id;
-          state.costs[id] = !!e.target.checked;
-          saveState();
-          renderCosts();
-        });
-      });
+      addCheckboxListeners(wrap, 'costs', renderCosts);
     }
   }
 
@@ -164,6 +163,10 @@ export function initializeDashboard(milestones, costData, config) {
     const totalVisaDuration = Math.max(1, calcDays(config.journeyStartDate, activeExpiryDate));
     const visaTimeUsed = Math.max(0, calcDays(config.journeyStartDate, todayForCalculations));
     elements.visaTimeProgress.style.width = `${Math.min(100, (visaTimeUsed / totalVisaDuration) * 100)}%`;
+
+    if (elements.pointsTargetDisplay) {
+      elements.pointsTargetDisplay.textContent = `Target: ${config.pointsTarget}`;
+    }
 
     const futureMilestones = milestones.filter(m => new Date(m.date) > todayForCalculations);
     if (futureMilestones.length > 0) {
@@ -211,20 +214,33 @@ export function initializeDashboard(milestones, costData, config) {
   }
 
   function initializeResetButtons() {
-    const handleReset = () => {
-      if (confirm('Are you sure you want to reset your dashboard data?')) {
-        state.points = {};
-        state.costs = {};
+    const handleReset = (type) => {
+      const message = type === 'points'
+        ? 'Are you sure you want to reset the points calculator?'
+        : 'Are you sure you want to reset the investment tracker?';
+      if (confirm(message)) {
+        if (type === 'points') {
+          state.points = {};
+          renderPoints();
+        } else if (type === 'costs') {
+          state.costs = {};
+          renderCosts();
+        }
         saveState();
-        renderPoints();
-        renderCosts();
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     };
+  
     const resetBtn1 = D('resetDataBtn');
     const resetBtn2 = D('resetDataBtn2');
-    if (resetBtn1) resetBtn1.addEventListener('click', handleReset);
-    if (resetBtn2) resetBtn2.addEventListener('click', handleReset);
+    if (resetBtn1) {
+      resetBtn1.addEventListener('click', () => handleReset('points'));
+      resetBtn1.title = 'Reset Points Calculator';
+    }
+    if (resetBtn2) {
+      resetBtn2.addEventListener('click', () => handleReset('costs'));
+      resetBtn2.title = 'Reset Investment Tracker';
+    }
   }
 
   state = loadState();

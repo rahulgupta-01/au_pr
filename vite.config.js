@@ -2,14 +2,33 @@ import { defineConfig } from 'vite';
 import handlebars from 'vite-plugin-handlebars';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { readdirSync } from 'fs';
-// 1. Import the new plugin
+import { readdirSync, readFileSync, writeFileSync } from 'fs';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
-// Modern, reliable way to get the directory path
+// --- Helper Plugin for Sitemap ---
+function updateSitemapDate() {
+  return {
+    name: 'update-sitemap-lastmod',
+    // This function runs after the build is complete
+    writeBundle() {
+      const sitemapPath = resolve(__dirname, 'dist', 'sitemap.xml');
+      const today = new Date().toISOString().split('T')[0]; // Gets date in YYYY-MM-DD format
+      try {
+        let sitemapContent = readFileSync(sitemapPath, 'utf-8');
+        // This regular expression finds all lastmod tags and replaces their content with today's date
+        sitemapContent = sitemapContent.replace(/<lastmod>.*<\/lastmod>/g, `<lastmod>${today}</lastmod>`);
+        writeFileSync(sitemapPath, sitemapContent);
+        console.log('sitemap.xml lastmod dates updated successfully.');
+      } catch (error) {
+        console.error('Error updating sitemap.xml:', error);
+      }
+    }
+  };
+}
+// ---------------------------------
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// This script automatically finds all .html files in your 'src' folder
 const input = readdirSync(resolve(__dirname, 'src'))
   .filter(file => file.endsWith('.html'))
   .reduce((acc, file) => {
@@ -24,7 +43,6 @@ export default defineConfig({
     handlebars({
       partialDirectory: resolve(__dirname, 'src', '_partials'),
     }),
-    // 2. Add and configure the plugin
     viteStaticCopy({
       targets: [
         { src: 'data', dest: '.' },
@@ -34,7 +52,9 @@ export default defineConfig({
         { src: 'robots.txt', dest: '.' },
         { src: 'sitemap.xml', dest: '.' }
       ]
-    })
+    }),
+    // Add our custom plugin to the list
+    updateSitemapDate()
   ],
   build: {
     outDir: '../dist',

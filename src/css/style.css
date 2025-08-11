@@ -162,6 +162,12 @@ a:hover {
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.main-content.fade-out {
+  opacity: 0;
 }
 
 .card {

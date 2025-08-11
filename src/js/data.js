@@ -11,7 +11,7 @@ export async function loadJourneyData(config) {
       }
     }
   } catch (e) {
-    console.warn('Ignoring corrupt cache', e);
+    console.warn(`Ignoring corrupt cache for key: ${LS_KEY}`, e);
   }
 
   try {

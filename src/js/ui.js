@@ -1,11 +1,7 @@
 /**
  * @file Manages all general UI components and interactions for the application.
- * Includes header navigation, theme switching, and other global UI elements.
  */
 
-/**
- * Initializes the header, including the slide-out navigation menu and its accessibility features.
- */
 function initializeHeader() {
   const navMenu = document.getElementById('navigation-menu');
   const hamburgerBtn = document.getElementById('hamburger-menu');
@@ -19,8 +15,8 @@ function initializeHeader() {
       navMenu.removeAttribute('inert');
     }
     if (overlay) overlay.classList.add('is-visible');
-    
-    // FIX: Focus the close button without the visual highlight ring
+
+    // Focus the close button without the visual highlight ring
     requestAnimationFrame(() => {
       if (closeMenuBtn) {
         closeMenuBtn.classList.add('programmatic-focus');
@@ -30,30 +26,32 @@ function initializeHeader() {
     });
   };
 
-  // Add event listeners to the menu buttons and overlay.
   if (hamburgerBtn) hamburgerBtn.addEventListener('click', openMenu);
   if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu);
   if (overlay) overlay.addEventListener('click', closeMenu);
 
+  // Keyboard accessibility for the menu
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && navMenu && navMenu.classList.contains('is-open')) {
+    if (e.key === 'Escape' && navMenu?.classList.contains('is-open')) {
       closeMenu();
     }
-    if (e.key === 'Tab' && navMenu && navMenu.classList.contains('is-open')) {
+    // Trap focus within the menu when it's open
+    if (e.key === 'Tab' && navMenu?.classList.contains('is-open')) {
       const focusableElements = Array.from(
         navMenu.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
       ).filter(el => !el.hasAttribute('disabled'));
+
       if (!focusableElements.length) return;
 
       const firstElement = focusableElements[0];
       const lastElement = focusableElements[focusableElements.length - 1];
 
-      if (e.shiftKey) {
+      if (e.shiftKey) { // Shift + Tab
         if (document.activeElement === firstElement) {
           lastElement.focus();
           e.preventDefault();
         }
-      } else {
+      } else { // Tab
         if (document.activeElement === lastElement) {
           firstElement.focus();
           e.preventDefault();
@@ -63,9 +61,6 @@ function initializeHeader() {
   });
 }
 
-/**
- * Closes the slide-out navigation menu and restores the page state.
- */
 export function closeMenu() {
   const navMenu = document.getElementById('navigation-menu');
   const overlay = document.getElementById('overlay');
@@ -77,7 +72,8 @@ export function closeMenu() {
     navMenu.setAttribute('inert', '');
   }
   if (overlay) overlay.classList.remove('is-visible');
-  
+
+  // Return focus to the element that opened the menu
   if (openingElement) {
     openingElement.classList.add('programmatic-focus');
     openingElement.focus();
@@ -85,16 +81,15 @@ export function closeMenu() {
   }
 }
 
-/**
- * Initializes the dark/light mode theme switcher.
- */
 function initializeTheme() {
   const themeToggle = document.getElementById('dark-mode-toggle');
   const currentTheme = localStorage.getItem('theme');
+
   if (currentTheme === 'dark') {
     document.body.classList.add('dark-mode');
     if (themeToggle) themeToggle.checked = true;
   }
+
   if (themeToggle) {
     themeToggle.addEventListener('change', function() {
       document.body.classList.toggle('dark-mode', this.checked);
@@ -103,9 +98,6 @@ function initializeTheme() {
   }
 }
 
-/**
- * Creates and manages the "scroll to top" button.
- */
 function initializeScrollToTop() {
   if (document.getElementById('scrollToTopBtn')) return;
 
@@ -124,18 +116,15 @@ function initializeScrollToTop() {
   });
 }
 
-/**
- * Updates the live clock in the header.
- */
 function updateClock() {
   const clockDateEl = document.getElementById('currentDate');
   const clockTimeEl = document.getElementById('currentTime');
+
   if (clockDateEl && clockTimeEl) {
     const now = new Date();
     const options = { timeZone: 'Australia/Perth' };
     clockDateEl.textContent = now.toLocaleDateString(
-      'en-AU',
-      { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', ...options }
+      'en-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', ...options }
     );
     clockTimeEl.textContent = now
       .toLocaleTimeString('en-AU', { hour12: true, hour: 'numeric', minute: '2-digit', second: '2-digit', ...options })
@@ -143,24 +132,22 @@ function updateClock() {
   }
 }
 
-/**
- * Initializes contact page copy buttons.
- */
 function initializeContactPage() {
   document.querySelectorAll('.copy-btn').forEach(button => {
-    if (button.dataset.bound === '1') return;
+    if (button.dataset.bound === '1') return; // Prevent double-binding
     button.dataset.bound = '1';
+
     const tip = button.querySelector('.tooltip-text');
     button.addEventListener('click', () => {
       const text = button.dataset.copy || '';
       navigator.clipboard.writeText(text)
         .then(() => {
           if (tip) {
-            const orig = tip.textContent;
+            const originalText = tip.textContent;
             tip.textContent = 'Copied!';
             button.classList.add('copied');
             setTimeout(() => {
-              tip.textContent = orig || 'Copy';
+              tip.textContent = originalText || 'Copy';
               button.classList.remove('copied');
             }, 1200);
           }
@@ -170,9 +157,6 @@ function initializeContactPage() {
   });
 }
 
-/**
- * Initializes tooltips globally.
- */
 function initializeTooltips() {
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.tooltip-wrapper')) {
@@ -183,37 +167,39 @@ function initializeTooltips() {
   });
 }
 
-// Highlights the current page in the header + slide-out nav
 export function setActiveNavLink(currentPath = location.pathname) {
-  const normalize = (p) =>
-    (p || '')
-      .replace(location.origin, '')
-      .split(/[?#]/)[0]
-      .replace(/\/index\.html$/i, '/') || '/';
-
+  const normalize = (p) => (p || '').replace(location.origin, '').split(/[?#]/)[0].replace(/\/index\.html$/i, '/') || '/';
   const current = normalize(currentPath);
 
-  const links = document.querySelectorAll(
-    'nav a, #navigation-menu a, header a[data-nav], .site-nav a'
-  );
-
-  links.forEach((a) => {
+  document.querySelectorAll('nav a, #navigation-menu a, header a[data-nav], .site-nav a').forEach((a) => {
     const href = a.getAttribute('href');
     if (!href || href.startsWith('#') || href.startsWith('mailto:')) {
       a.classList.remove('active', 'is-active');
       a.removeAttribute('aria-current');
       return;
     }
+
     let linkPath = href;
     try { linkPath = new URL(href, location.origin).pathname; } catch {}
     const link = normalize(linkPath);
-    const isActive = link === current || (link === '/' && current === '/');
+    const isActive = link === current;
 
     a.classList.toggle('active', isActive);
     a.classList.toggle('is-active', isActive);
-    if (isActive) a.setAttribute('aria-current', 'page');
-    else a.removeAttribute('aria-current');
+
+    if (isActive) {
+      a.setAttribute('aria-current', 'page');
+    } else {
+      a.removeAttribute('aria-current');
+    }
   });
+}
+
+function updateCopyrightYear() {
+  const yearSpan = document.getElementById('copyright-year');
+  if (yearSpan) {
+    yearSpan.textContent = new Date().getFullYear();
+  }
 }
 
 /**
@@ -224,7 +210,7 @@ export function initializeUI() {
   initializeTheme();
   initializeScrollToTop();
   initializeTooltips();
-  setActiveNavLink();
+  updateCopyrightYear();
 
   if (document.getElementById('currentDate')) {
     updateClock();
