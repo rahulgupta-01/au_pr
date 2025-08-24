@@ -50,7 +50,10 @@ export default defineConfig({
         { src: 'images', dest: '.' },
         { src: 'sw.js', dest: '.' },
         { src: 'robots.txt', dest: '.' },
-        { src: 'sitemap.xml', dest: '.' }
+        { src: 'sitemap.xml', dest: '.' },
+        // Add these two lines
+        { src: 'css', dest: '.' },
+        { src: '404.html', dest: '.' }
       ]
     }),
     // Add our custom plugin to the list
