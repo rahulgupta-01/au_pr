@@ -1,9 +1,7 @@
-const CACHE_NAME = 'apr-shell-v1';
+const CACHE_NAME = 'apr-shell-v2';
 const DATA_CACHE = 'apr-data-v1';
 
 const SHELL_ASSETS = [
-  '/',
-  '/index.html',
   '/css/style.css',
   '/js/main.js',
   '/js/router.js',
@@ -12,7 +10,6 @@ const SHELL_ASSETS = [
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(SHELL_ASSETS)));
-  // self.skipWaiting(); // REMOVED: We want the new worker to wait.
 });
 
 self.addEventListener('activate', (event) => {
