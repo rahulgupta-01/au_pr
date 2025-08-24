@@ -356,19 +356,6 @@ a:hover {
   z-index: 1001;
 }
 
-.header-home-link:focus-visible,
-.hamburger-menu:focus-visible,
-.close-menu:focus-visible {
-  border-radius: 8px;
-  box-shadow: 0 0 0 3px rgba(24, 86, 212, 0.15);
-}
-
-body.dark-mode .header-home-link:focus-visible,
-body.dark-mode .hamburger-menu:focus-visible,
-body.dark-mode .close-menu:focus-visible {
-  box-shadow: 0 0 0 3px rgba(24, 86, 212, 0.25);
-}
-
 /* ==========================================================================
    5. Components
    ========================================================================== */
