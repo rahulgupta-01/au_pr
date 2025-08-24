@@ -37,29 +37,6 @@ function initializeHeader() {
     if (e.key === 'Escape' && navMenu?.classList.contains('is-open')) {
       closeMenu();
     }
-    // Trap focus within the menu when it's open
-    if (e.key === 'Tab' && navMenu?.classList.contains('is-open')) {
-      const focusableElements = Array.from(
-        navMenu.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
-      ).filter(el => !el.hasAttribute('disabled'));
-
-      if (!focusableElements.length) return;
-
-      const firstElement = focusableElements[0];
-      const lastElement = focusableElements[focusableElements.length - 1];
-
-      if (e.shiftKey) { // Shift + Tab
-        if (document.activeElement === firstElement) {
-          lastElement.focus();
-          e.preventDefault();
-        }
-      } else { // Tab
-        if (document.activeElement === lastElement) {
-          firstElement.focus();
-          e.preventDefault();
-        }
-      }
-    }
   });
 }
 
