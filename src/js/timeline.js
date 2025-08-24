@@ -15,7 +15,7 @@ function renderTimeline(milestones, filter = 'all') {
         // The details are now rendered directly in a div that is initially hidden by CSS
         return `
             <div class="milestone" data-phase="${m.phase}">
-                <div class="milestone-header" role="button" tabindex="0" data-id="${m.id}" aria-expanded="false" aria-controls="details_${m.id}">
+                <div class="milestone-header" data-id="${m.id}" aria-expanded="false" aria-controls="details_${m.id}">
                     <div class="milestone-icon ${isCompleted ? 'completed' : 'future'}">
                         <i class="fas fa-${isCompleted ? 'check' : 'hourglass-start'}"></i>
                     </div>
@@ -40,12 +40,6 @@ function renderTimeline(milestones, filter = 'all') {
         };
 
         header.addEventListener('click', action);
-        header.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                action(e);
-            }
-        });
     });
 }
 
