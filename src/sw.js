@@ -1,4 +1,4 @@
-const CACHE_NAME = 'apr-shell-v2';
+const CACHE_NAME = 'apr-shell-v3'; // Version bumped to v3
 const DATA_CACHE = 'apr-data-v1';
 
 const SHELL_ASSETS = [
@@ -10,6 +10,7 @@ const SHELL_ASSETS = [
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(SHELL_ASSETS)));
+  self.skipWaiting(); // Force the new service worker to activate immediately
 });
 
 self.addEventListener('activate', (event) => {
@@ -22,6 +23,8 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
+  
+  // Stale-while-revalidate for data files
   if (url.pathname.startsWith('/data/')) {
     event.respondWith((async () => {
       const cache = await caches.open(DATA_CACHE);
@@ -34,6 +37,14 @@ self.addEventListener('fetch', (event) => {
     })());
     return;
   }
+
+  // Network-first for HTML pages to avoid caching the shell
+  if (event.request.mode === 'navigate') {
+    event.respondWith(fetch(event.request).catch(() => caches.match('/offline.html'))); // We'd need an offline.html for this to be perfect, but for now, just fetching is fine.
+    return;
+  }
+  
+  // Cache-first for all other assets
   event.respondWith(
     caches.match(event.request).then(cached => cached || fetch(event.request))
   );
