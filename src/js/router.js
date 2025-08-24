@@ -61,17 +61,6 @@ async function render(path) {
 
       setActiveNavLink(path);
 
-      // Focus management for accessibility
-      const focusTarget = container.querySelector('h1, h2, [role="heading"]');
-      if (focusTarget) {
-        focusTarget.setAttribute('tabindex', '-1');
-        focusTarget.classList.add('programmatic-focus');
-        focusTarget.focus({ preventScroll: true });
-        setTimeout(() => {
-          focusTarget.classList.remove('programmatic-focus');
-        }, 100);
-      }
-
       if (typeof window.__afterRoute === 'function') {
         window.__afterRoute(path);
       }
