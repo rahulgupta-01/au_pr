@@ -12,51 +12,25 @@ function initializeHeader() {
     document.body.classList.add('menu-is-open');
     if (navMenu) {
       navMenu.classList.add('is-open');
-      navMenu.removeAttribute('inert');
       // Set aria-hidden to false so screen readers can access the menu
       navMenu.setAttribute('aria-hidden', 'false');
     }
     if (overlay) overlay.classList.add('is-visible');
-
-    // Focus the close button without the visual highlight ring
-    requestAnimationFrame(() => {
-      if (closeMenuBtn) {
-        closeMenuBtn.classList.add('programmatic-focus');
-        closeMenuBtn.focus();
-        setTimeout(() => closeMenuBtn.classList.remove('programmatic-focus'), 100);
-      }
-    });
   };
 
   if (hamburgerBtn) hamburgerBtn.addEventListener('click', openMenu);
   if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu);
   if (overlay) overlay.addEventListener('click', closeMenu);
-
-  // Keyboard accessibility for the menu
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && navMenu?.classList.contains('is-open')) {
-      closeMenu();
-    }
-  });
 }
 
 export function closeMenu() {
   const navMenu = document.getElementById('navigation-menu');
   const overlay = document.getElementById('overlay');
-  const openingElement = document.querySelector('.hamburger-menu');
-
-  // **THE FIX:** Move focus back to the opening element BEFORE hiding the menu.
-  if (openingElement) {
-    openingElement.classList.add('programmatic-focus');
-    openingElement.focus();
-    setTimeout(() => openingElement.classList.remove('programmatic-focus'), 100);
-  }
   
   // Now that focus is safe, hide the menu and overlay.
   document.body.classList.remove('menu-is-open');
   if (navMenu) {
     navMenu.classList.remove('is-open');
-    navMenu.setAttribute('inert', '');
     // Set aria-hidden to true so screen readers ignore the closed menu
     navMenu.setAttribute('aria-hidden', 'true');
   }
