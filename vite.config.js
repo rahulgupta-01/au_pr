@@ -24,16 +24,13 @@ export default defineConfig({
     handlebars({
       partialDirectory: resolve(__dirname, 'src', '_partials'),
     }),
-    // This plugin copies directories that Vite doesn't know about, like your data files.
     viteStaticCopy({
       targets: [
         {
-          // Because root is 'src', the path is now just 'data'.
           src: 'data',
-          dest: '.' // This copies it to the root of the 'dist' folder.
+          dest: '.'
         },
         {
-          // Also copy the images folder, as it's referenced directly in HTML.
           src: 'images',
           dest: '.'
         },
@@ -47,15 +44,14 @@ export default defineConfig({
         }
       ]
     }),
-    // The PWA plugin will automatically generate the service worker.
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['**/*'],
       strategies: 'generateSW',
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,jpeg,woff2}'],
+        // ✅ CHANGE MADE HERE: Added 'json' to the list of file types
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,jpeg,woff2,json}'],
         navigateFallback: 'index.html',
-        // This is the new part that caches the Font Awesome files
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/cdnjs\.cloudflare\.com\/.*/i,
@@ -64,7 +60,7 @@ export default defineConfig({
               cacheName: 'fontawesome-cache',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
+                maxAgeSeconds: 60 * 60 * 24 * 365 // 365 days
               },
               cacheableResponse: {
                 statuses: [0, 200]
@@ -91,7 +87,6 @@ export default defineConfig({
             sizes: '512x512',
             type: 'image/png'
           },
-          // Adding the apple-touch-icon to the manifest
           {
             src: 'assets/apple-touch-icon.png',
             sizes: '180x180',
