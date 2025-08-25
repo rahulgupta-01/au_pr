@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "node generate-sitemap.js && vite build",
+    "generate-sitemap": "node generate-sitemap.js"
   },
   "keywords": [
     "firebase",
