@@ -55,12 +55,12 @@ async function initializeApp() {
     initializeUI();
 
     const config = await fetchConfig();
-    const { milestones, costData } = await loadJourneyData(config);
+    const { milestones, costData, pointsData } = await loadJourneyData(config);
 
     const runPageScripts = (path) => {
       initializeUI();
       if (document.querySelector('.key-metrics-panel')) {
-        initializeDashboard(milestones, costData, config);
+        initializeDashboard(milestones, costData, pointsData, config);
       }
       if (document.getElementById('timeline')) {
         initializeTimeline(milestones);

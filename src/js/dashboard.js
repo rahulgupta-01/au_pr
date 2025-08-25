@@ -25,7 +25,7 @@ function checkUpcomingMilestones(milestones) {
   }
 }
 
-export function initializeDashboard(milestones, costData, config) {
+export function initializeDashboard(milestones, costData, pointsData, config) {
   const dashboardContainer = document.querySelector('.main-content');
   if (!dashboardContainer) return;
 
@@ -74,36 +74,31 @@ export function initializeDashboard(milestones, costData, config) {
     return age;
   };
 
-  function getPointsData() {
+  function getProcessedPointsData() {
     const age = calculateAge(config.userDOB);
     const dob = new Date(config.userDOB);
-    const year25 = dob.getFullYear() + 25;
-    const month = dob.getMonth();
-    const day = dob.getDate();
-    const birthday25 = new Date(year25, month, day);
-
     const jrpCompletionMilestone = milestones.find(m => m.id === 'jrp_complete');
-    const workExpAchievedDate = jrpCompletionMilestone ? jrpCompletionMilestone.date : null;
 
-    return [
-      {
-        id: 'age', label: 'Age', points: 30, currentPoints: age < 25 ? 25 : 30,
-        achievedDate: age >= 25 ? birthday25.toISOString().slice(0,10) : null,
-        tooltip: 'Points based on age at time of invitation.' },
-      { id: 'english', label: 'Superior English', points: 20, currentPoints: 10, tooltip: 'Superior (e.g., IELTS 8 or equivalent in each PTE component) vs Proficient.' },
-      { id: 'work_exp', label: '1 Year Aus Work Exp', points: 5, currentPoints: 0, achievedDate: workExpAchievedDate, tooltip: 'Achieved after completing the 12-month Job Ready Program.' },
-      { id: 'degree', label: 'Bachelor Degree', points: 15, currentPoints: 15, initial: true, tooltip: 'Points for your Bachelor of IT degree from Griffith University.' },
-      { id: 'study_req', label: 'Australian Study Req', points: 5, currentPoints: 5, initial: true, tooltip: 'Two academic years of study in Australia.' },
-      { id: 'naati', label: 'Community Language', points: 5, currentPoints: 0, tooltip: 'NAATI CCL (Hindi).' },
-      { id: 'regional', label: 'Regional Study', points: 5, currentPoints: 5, initial: true, tooltip: 'Studied in a designated regional area.' },
-      { id: 'single', label: 'Single Applicant', points: 10, currentPoints: 10, initial: true, tooltip: 'Applying as a single applicant.' },
-    ];
+    return pointsData.map(p => {
+        const processedPoint = {...p};
+        if (p.achievedDate === 'BIRTHDAY_25') {
+            const year25 = dob.getFullYear() + 25;
+            const month = dob.getMonth();
+            const day = dob.getDate();
+            processedPoint.achievedDate = new Date(year25, month, day).toISOString().slice(0, 10);
+            processedPoint.currentPoints = age < 25 ? 25 : 30;
+        }
+        if (p.achievedDate === 'JRP_COMPLETE') {
+            processedPoint.achievedDate = jrpCompletionMilestone ? jrpCompletionMilestone.date : null;
+        }
+        return processedPoint;
+    });
   }
 
   function renderPoints() {
-    const pointsData = getPointsData();
+    const processedPointsData = getProcessedPointsData();
     let currentTotal = 0;
-    elements.pointsBreakdown.innerHTML = pointsData.map(p => {
+    elements.pointsBreakdown.innerHTML = processedPointsData.map(p => {
       const isAchievedByDate = p.achievedDate && new Date(p.achievedDate) <= todayForCalculations;
       const isChecked = !!state.points[p.id] || isAchievedByDate || !!p.initial;
       const displayPoints = isChecked ? p.points : (p.currentPoints || 0);
@@ -227,15 +222,9 @@ export function initializeDashboard(milestones, costData, config) {
 
   function initializeResetButtons() {
     const handleReset = (type) => {
-      const message = type === 'points'
-        ? 'Are you sure you want to reset the points calculator?'
-        : 'Are you sure you want to reset the investment tracker?';
+      const message = `Are you sure you want to reset the ${type} tracker?`;
       if (confirm(message)) {
-        if (type === 'points') {
-          setState({ points: {} });
-        } else if (type === 'costs') {
-          setState({ costs: {} });
-        }
+        setState({ [type]: {} });
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     };
