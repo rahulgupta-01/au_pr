@@ -94,7 +94,7 @@
     ],
     "rewrites": [
       {
-        "source": "**",
+        "source": "!/@(assets|css|data|images|js)/**",
         "destination": "/index.html"
       }
     ]

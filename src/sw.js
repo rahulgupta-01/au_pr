@@ -67,21 +67,31 @@ self.addEventListener('fetch', (event) => {
     );
     return;
   }
-
+  
   // --- MODIFIED SECTION ---
-  // Strategy 2: For direct navigation, try to serve the asset from cache first.
-  // If not found, fall back to the main app shell for SPA routing.
+  // Strategy 2: For direct navigation, serve from cache or network for assets,
+  // but fall back to the SPA shell for page routes.
   if (request.mode === 'navigate') {
+    // Regex to check for common file extensions in the URL path.
+    const isAsset = /\.(png|jpe?g|gif|svg|webp|ico|css|js|woff2?|json|webmanifest)$/.test(url.pathname);
+
     event.respondWith(
       caches.match(request).then(cachedResponse => {
-        // If the exact request (e.g., for the image) is in the cache, return it.
+        // If the exact request is in the cache, always return it.
         if (cachedResponse) {
           return cachedResponse;
         }
-        // Otherwise, it's a page route, so serve the SPA's index.html.
-        return caches.match('/index.html').then(response => {
-          return response || fetch('/index.html');
-        });
+        // If it's not in the cache AND it's not an asset, it's a page route.
+        // Serve the SPA's index.html.
+        if (!isAsset) {
+          return caches.match('/index.html').then(response => {
+            return response || fetch('/index.html');
+          });
+        }
+        // If it's an asset not in the cache, try fetching it from the network.
+        // This will fail gracefully offline, which is the correct behavior
+        // for a non-essential asset that wasn't pre-cached.
+        return fetch(request);
       })
     );
     return;
