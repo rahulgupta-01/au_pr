@@ -11,7 +11,6 @@ const SHELL_ASSETS = [
   '/visa.html',
   '/documents.html',
   '/contact.html',
-  '/offline.html', 
   '/css/style.css',
   '/js/main.js',
   '/js/router.js',
@@ -75,9 +74,6 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       caches.match('/index.html').then(response => {
         return response || fetch('/index.html');
-      }).catch(() => {
-        // If the app shell itself isn't cached and network fails, show offline page.
-        return caches.match('/offline.html');
       })
     );
     return;

@@ -50,8 +50,6 @@ export default defineConfig({
         { src: 'robots.txt', dest: '.' },
         { src: 'sitemap.xml', dest: '.' },
         { src: 'css', dest: '.' },
-        // 404.html is removed from here
-        { src: 'offline.html', dest: '.' }
       ]
     }),
     updateSitemapDate()
