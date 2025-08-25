@@ -1395,3 +1395,27 @@ body.dark-mode .skeleton {
 .skeleton-text-full {
   width: 100%; height: 40px;
 }
+
+/*
+  Prevents the default focus outline on the menu buttons.
+  This is a stylistic choice to avoid the highlight on mobile.
+  The buttons are still focusable for accessibility.
+*/
+.hamburger-menu:focus,
+.close-menu:focus,
+.header-home-link:focus {
+  outline: none;
+  box-shadow: none;
+  background-color: transparent; /* Prevents background color change on focus */
+}
+
+/* Optional: Re-enables a subtle background color change on hover for desktop users, 
+  which is not affected by the focus change above.
+*/
+@media (hover: hover) {
+  .hamburger-menu:hover,
+  .close-menu:hover,
+  .header-home-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}

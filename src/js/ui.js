@@ -12,8 +12,11 @@ function initializeHeader() {
     document.body.classList.add('menu-is-open');
     if (navMenu) {
       navMenu.classList.add('is-open');
-      // Set aria-hidden to false so screen readers can access the menu
       navMenu.setAttribute('aria-hidden', 'false');
+      // Move focus to the close button when the menu opens
+      if (closeMenuBtn) {
+        closeMenuBtn.focus();
+      }
     }
     if (overlay) overlay.classList.add('is-visible');
   };
@@ -26,12 +29,18 @@ function initializeHeader() {
 export function closeMenu() {
   const navMenu = document.getElementById('navigation-menu');
   const overlay = document.getElementById('overlay');
+  const hamburgerBtn = document.getElementById('hamburger-menu');
+
+  // Move focus back to the hamburger button before hiding the menu.
+  // This is the key fix for the error.
+  if (hamburgerBtn) {
+    hamburgerBtn.focus();
+  }
   
   // Now that focus is safe, hide the menu and overlay.
   document.body.classList.remove('menu-is-open');
   if (navMenu) {
     navMenu.classList.remove('is-open');
-    // Set aria-hidden to true so screen readers ignore the closed menu
     navMenu.setAttribute('aria-hidden', 'true');
   }
   if (overlay) overlay.classList.remove('is-visible');
@@ -111,6 +120,17 @@ function initializeContactPage() {
         .catch(err => console.error('Failed to copy text: ', err));
     });
   });
+}
+
+// This function handles image fallbacks
+function initializeImageFallbacks() {
+  const profilePic = document.querySelector('img.profile-picture');
+  if (profilePic) {
+    // The { once: true } option automatically removes the listener after it runs once, preventing the loop.
+    profilePic.addEventListener('error', () => {
+      profilePic.src = 'https://placehold.co/180x180/00529B/FFFFFF?text=RG';
+    }, { once: true });
+  }
 }
 
 function initializeTooltips() {
@@ -233,6 +253,7 @@ export function initializeUI() {
   initializeScrollToTop();
   initializeTooltips();
   updateCopyrightYear();
+  initializeImageFallbacks(); // Call the new function here
 
   if (document.getElementById('currentDate')) {
     updateClock();

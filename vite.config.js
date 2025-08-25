@@ -9,8 +9,8 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 function updateSitemapDate() {
   return {
     name: 'update-sitemap-lastmod',
-    // This function runs after the build is complete
-    writeBundle() {
+    // This hook runs AFTER all files are written, ensuring sitemap.xml exists.
+    closeBundle() {
       const sitemapPath = resolve(__dirname, 'dist', 'sitemap.xml');
       const today = new Date().toISOString().split('T')[0]; // Gets date in YYYY-MM-DD format
       try {
@@ -20,6 +20,7 @@ function updateSitemapDate() {
         writeFileSync(sitemapPath, sitemapContent);
         console.log('sitemap.xml lastmod dates updated successfully.');
       } catch (error) {
+        // This catch is still good practice in case of other file system issues.
         console.error('Error updating sitemap.xml:', error);
       }
     }

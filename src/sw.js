@@ -23,6 +23,11 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
+
+  // If the request is for an external domain, ignore it and let the browser handle it.
+  if (url.origin !== self.location.origin) {
+    return;
+  }
   
   // Stale-while-revalidate for data files
   if (url.pathname.startsWith('/data/')) {
@@ -44,8 +49,10 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
-  // Cache-first for all other assets
+  // Cache-first for all other assets from our own domain
   event.respondWith(
-    caches.match(event.request).then(cached => cached || fetch(event.request))
+    caches.match(event.request).then(cached => {
+      return cached || fetch(event.request);
+    })
   );
 });
