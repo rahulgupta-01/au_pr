@@ -1,3 +1,4 @@
+// src/js/dashboard.js
 import { todayForCalculations, calcDays, escapeHTML } from './utils.js';
 // Import from the new centralized store
 import { state, setState, subscribe } from './store.js';
@@ -28,26 +29,26 @@ export function initializeDashboard(milestones, costData, config) {
   const dashboardContainer = document.querySelector('.main-content');
   if (!dashboardContainer) return;
 
-  const D = (id) => dashboardContainer.querySelector(`#${id}`);
-
   const elements = {
-    currentPoints: D('currentPoints'),
-    pointsProgress: D('pointsProgress'),
-    pointsBreakdown: D('points-breakdown'),
-    currentTotalPoints: D('currentTotalPoints'),
-    costTracker: D('cost-tracker'),
-    totalCostSpent: D('total_cost_spent'),
-    totalSpentDisplay: D('totalSpentDisplay'),
-    totalBudgetDisplay: D('totalBudgetDisplay'),
-    investmentProgress: D('investmentProgress'),
-    daysRemaining: D('daysRemaining'),
-    visaStatus: D('visaStatus'),
-    visaTimeProgress: D('visaTimeProgress'),
-    nextMilestoneCountdown: D('nextMilestoneCountdown'),
-    nextMilestoneTitle: D('nextMilestoneTitle'),
-    milestoneProgress: D('milestoneProgress'),
-    alertsContainer: D('alertsContainer'),
-    pointsTargetDisplay: D('pointsTargetDisplay'),
+    currentPoints: dashboardContainer.querySelector('#currentPoints'),
+    pointsProgress: dashboardContainer.querySelector('#pointsProgress'),
+    pointsBreakdown: dashboardContainer.querySelector('#points-breakdown'),
+    currentTotalPoints: dashboardContainer.querySelector('#currentTotalPoints'),
+    costTracker: dashboardContainer.querySelector('#cost-tracker'),
+    totalCostSpent: dashboardContainer.querySelector('#total_cost_spent'),
+    totalSpentDisplay: dashboardContainer.querySelector('#totalSpentDisplay'),
+    totalBudgetDisplay: dashboardContainer.querySelector('#totalBudgetDisplay'),
+    investmentProgress: dashboardContainer.querySelector('#investmentProgress'),
+    daysRemaining: dashboardContainer.querySelector('#daysRemaining'),
+    visaStatus: dashboardContainer.querySelector('#visaStatus'),
+    visaTimeProgress: dashboardContainer.querySelector('#visaTimeProgress'),
+    nextMilestoneCountdown: dashboardContainer.querySelector('#nextMilestoneCountdown'),
+    nextMilestoneTitle: dashboardContainer.querySelector('#nextMilestoneTitle'),
+    milestoneProgress: dashboardContainer.querySelector('#milestoneProgress'),
+    alertsContainer: dashboardContainer.querySelector('#alertsContainer'),
+    pointsTargetDisplay: dashboardContainer.querySelector('#pointsTargetDisplay'),
+    resetDataBtn: dashboardContainer.querySelector('#resetDataBtn'),
+    resetDataBtn2: dashboardContainer.querySelector('#resetDataBtn2')
   };
 
   // Helper function to handle checkbox interactions
@@ -62,7 +63,7 @@ export function initializeDashboard(milestones, costData, config) {
       });
     });
   }
-  
+
   const formatCurrency = (val) => new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD', minimumFractionDigits: 0 }).format(val);
 
   const calculateAge = (dob) => {
@@ -122,10 +123,9 @@ export function initializeDashboard(milestones, costData, config) {
     elements.currentPoints.textContent = currentTotal;
     elements.pointsProgress.style.width = `${Math.min(100, (currentTotal / config.pointsTarget) * 100)}%`;
 
-    const wrap = D('points-breakdown');
-    if (wrap) {
-      addCheckboxListeners(wrap, 'points');
-      wrap.querySelectorAll('.tooltip-wrapper').forEach(wrapper => {
+    if (elements.pointsBreakdown) {
+      addCheckboxListeners(elements.pointsBreakdown, 'points');
+      elements.pointsBreakdown.querySelectorAll('.tooltip-wrapper').forEach(wrapper => {
         wrapper.addEventListener('click', (e) => {
           document.querySelectorAll('.tooltip-wrapper.is-active').forEach(w => {
             if (w !== wrapper) w.classList.remove('is-active');
@@ -158,9 +158,8 @@ export function initializeDashboard(milestones, costData, config) {
     elements.totalBudgetDisplay.textContent = `Budget: ${formatCurrency(totalBudget)}`;
     elements.investmentProgress.style.width = totalBudget > 0 ? `${Math.min(100, (totalSpent / totalBudget) * 100)}%` : '0%';
 
-    const wrap = D('cost-tracker');
-    if (wrap) {
-      addCheckboxListeners(wrap, 'costs');
+    if (elements.costTracker) {
+      addCheckboxListeners(elements.costTracker, 'costs');
     }
   }
 
@@ -240,19 +239,17 @@ export function initializeDashboard(milestones, costData, config) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     };
-  
-    const resetBtn1 = D('resetDataBtn');
-    const resetBtn2 = D('resetDataBtn2');
-    if (resetBtn1) {
-      resetBtn1.addEventListener('click', () => handleReset('points'));
-      resetBtn1.title = 'Reset Points Calculator';
+
+    if (elements.resetDataBtn) {
+      elements.resetDataBtn.addEventListener('click', () => handleReset('points'));
+      elements.resetDataBtn.title = 'Reset Points Calculator';
     }
-    if (resetBtn2) {
-      resetBtn2.addEventListener('click', () => handleReset('costs'));
-      resetBtn2.title = 'Reset Investment Tracker';
+    if (elements.resetDataBtn2) {
+      elements.resetDataBtn2.addEventListener('click', () => handleReset('costs'));
+      elements.resetDataBtn2.title = 'Reset Investment Tracker';
     }
   }
-  
+
   // Subscribe to state changes to re-render the dynamic parts of the UI
   subscribe(() => {
     renderPoints();
@@ -266,7 +263,7 @@ export function initializeDashboard(milestones, costData, config) {
   updateAlerts();
   initializeResetButtons();
   checkUpcomingMilestones(milestones);
-  
+
   // Remove skeletons and show content after initialization
   dashboardContainer.querySelectorAll('.skeleton-item').forEach(el => el.remove());
   dashboardContainer.querySelectorAll('.metric-item, #points-breakdown > *, #cost-tracker > *').forEach(el => {
