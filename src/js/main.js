@@ -54,32 +54,8 @@ async function fetchConfig() {
 
 async function initializeApp() {
   try {
-    if ('serviceWorker' in navigator) {
-      if (import.meta && import.meta.env && import.meta.env.PROD) {
-        // Register the service worker
-        const registration = await navigator.serviceWorker.register('/sw.js');
-
-        // This is the robust way to detect updates.
-        registration.addEventListener('updatefound', () => {
-          const newWorker = registration.installing;
-          if (newWorker) {
-            newWorker.addEventListener('statechange', () => {
-              // The new worker has successfully installed and is waiting to activate.
-              // We check for `navigator.serviceWorker.controller` to ensure this isn't the first install.
-              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                showUpdateToast();
-              }
-            });
-          }
-        });
-      } else {
-        // Unregister any active service workers in development mode.
-        try {
-          const regs = await navigator.serviceWorker.getRegistrations();
-          for (const r of regs) { await r.unregister().catch(()=>{}); }
-        } catch {}
-      }
-    }
+    // The entire 'serviceWorker' block has been removed from here.
+    // The vite-plugin-pwa now handles registration automatically.
 
     initializeUI();
 
