@@ -50,12 +50,28 @@ export default defineConfig({
     // The PWA plugin will automatically generate the service worker.
     VitePWA({
       registerType: 'autoUpdate',
+      includeAssets: ['**/*'],
       strategies: 'generateSW',
       workbox: {
-        // The globPatterns will automatically find and cache all your hashed assets.
         globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,jpeg,woff2}'],
-        // This is crucial for your single-page app to work offline.
-        navigateFallback: 'index.html'
+        navigateFallback: 'index.html',
+        // This is the new part that caches the Font Awesome files
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/cdnjs\.cloudflare\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'fontawesome-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          }
+        ]
       },
       manifest: {
         name: 'Australian PR Journey',
@@ -73,6 +89,12 @@ export default defineConfig({
           {
             src: 'assets/android-chrome-512x512.png',
             sizes: '512x512',
+            type: 'image/png'
+          },
+          // Adding the apple-touch-icon to the manifest
+          {
+            src: 'assets/apple-touch-icon.png',
+            sizes: '180x180',
             type: 'image/png'
           }
         ]
