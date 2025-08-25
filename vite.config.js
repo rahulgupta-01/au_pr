@@ -9,18 +9,15 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 function updateSitemapDate() {
   return {
     name: 'update-sitemap-lastmod',
-    // This hook runs AFTER all files are written, ensuring sitemap.xml exists.
     closeBundle() {
       const sitemapPath = resolve(__dirname, 'dist', 'sitemap.xml');
-      const today = new Date().toISOString().split('T')[0]; // Gets date in YYYY-MM-DD format
+      const today = new Date().toISOString().split('T')[0];
       try {
         let sitemapContent = readFileSync(sitemapPath, 'utf-8');
-        // This regular expression finds all lastmod tags and replaces their content with today's date
         sitemapContent = sitemapContent.replace(/<lastmod>.*<\/lastmod>/g, `<lastmod>${today}</lastmod>`);
         writeFileSync(sitemapPath, sitemapContent);
         console.log('sitemap.xml lastmod dates updated successfully.');
       } catch (error) {
-        // This catch is still good practice in case of other file system issues.
         console.error('Error updating sitemap.xml:', error);
       }
     }
@@ -52,13 +49,11 @@ export default defineConfig({
         { src: 'sw.js', dest: '.' },
         { src: 'robots.txt', dest: '.' },
         { src: 'sitemap.xml', dest: '.' },
-        // Add these two lines
         { src: 'css', dest: '.' },
-        { src: '404.html', dest: '.' },
+        // 404.html is removed from here
         { src: 'offline.html', dest: '.' }
       ]
     }),
-    // Add our custom plugin to the list
     updateSitemapDate()
   ],
   build: {
