@@ -1,5 +1,5 @@
 // A unique name for the cache, updated to trigger a refresh when the service worker changes.
-const CACHE_NAME = 'apr-shell-v7'; 
+const CACHE_NAME = 'apr-shell-v7';
 const DATA_CACHE = 'apr-data-v2';
 
 // Core assets that make up the app's shell. All HTML pages are included for the router.
@@ -68,16 +68,26 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Strategy 2: For direct navigation, always serve the main app shell.
-  // The client-side router will handle rendering the correct page.
+  // --- MODIFIED SECTION ---
+  // Strategy 2: For direct navigation, try to serve the asset from cache first.
+  // If not found, fall back to the main app shell for SPA routing.
   if (request.mode === 'navigate') {
     event.respondWith(
-      caches.match('/index.html').then(response => {
-        return response || fetch('/index.html');
+      caches.match(request).then(cachedResponse => {
+        // If the exact request (e.g., for the image) is in the cache, return it.
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        // Otherwise, it's a page route, so serve the SPA's index.html.
+        return caches.match('/index.html').then(response => {
+          return response || fetch('/index.html');
+        });
       })
     );
     return;
   }
+  // --- END OF MODIFIED SECTION ---
+
 
   // Strategy 3: Cache-first for all other assets (CSS, JS, images, and HTML partials requested by the router).
   event.respondWith(

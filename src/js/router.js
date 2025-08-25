@@ -38,7 +38,9 @@ async function render(path) {
   // Wait for fade-out to finish before loading new content
   setTimeout(async () => {
     if (!route) {
-      container.innerHTML = `<div class="card"><div class="card-header"><i class="fas fa-exclamation-triangle"></i> Page not found</div><p>We couldn't find <code>${path}</code>. Try the Dashboard.</p></div>`;
+      // --- MODIFIED LINE ---
+      container.innerHTML = `<div class="card"><div class="card-header"><i class="fas fa-exclamation-triangle"></i> Page not found</div><p>We couldn't find <code>${path}</code>. Try the <a href="/">Dashboard</a>.</p></div>`;
+      // --- END OF MODIFIED LINE ---
       setActiveNavLink('/');
       document.title = 'Not Found | Australian PR Journey';
       container.classList.remove('fade-out'); // Fade back in
