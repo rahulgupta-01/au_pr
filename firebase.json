@@ -8,7 +8,7 @@
     ],
     "headers": [
       {
-        "source": "**/*.woff2",
+        "source": "**/*.@(woff2|css|js|png|jpg|jpeg|gif|webp|svg|ico)",
         "headers": [
           {
             "key": "Cache-Control",
@@ -17,43 +17,7 @@
         ]
       },
       {
-        "source": "**/*.css",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "public,max-age=31536000,immutable"
-          }
-        ]
-      },
-      {
-        "source": "**/*.js",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "public,max-age=31536000,immutable"
-          }
-        ]
-      },
-      {
-        "source": "**/*.{png,jpg,jpeg,gif,webp,svg,ico}",
-        "headers": [
-          {
-            "key": "Cache-control",
-            "value": "public,max-age=31536000,immutable"
-          }
-        ]
-      },
-      {
-        "source": "**/*.json",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "public,max-age=86400"
-          }
-        ]
-      },
-      {
-        "source": "assets/site-*.webmanifest",
+        "source": "**/*.@(json|webmanifest)",
         "headers": [
           {
             "key": "Cache-Control",
@@ -94,7 +58,7 @@
     ],
     "rewrites": [
       {
-        "source": "!/@(assets|css|data|images|js)/**",
+        "source": "**",
         "destination": "/index.html"
       }
     ]
