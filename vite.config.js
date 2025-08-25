@@ -54,7 +54,8 @@ export default defineConfig({
         { src: 'sitemap.xml', dest: '.' },
         // Add these two lines
         { src: 'css', dest: '.' },
-        { src: '404.html', dest: '.' }
+        { src: '404.html', dest: '.' },
+        { src: 'offline.html', dest: '.' }
       ]
     }),
     // Add our custom plugin to the list
