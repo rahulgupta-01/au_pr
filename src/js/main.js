@@ -1,7 +1,7 @@
 import { loadJourneyData } from './data.js';
 import { initializeDashboard } from './dashboard.js';
 import { initializeTimeline } from './timeline.js';
-import { initializeUI, showUpdateToast } from './ui.js';
+import { initializeUI } from './ui.js';
 import { initializeRouter } from './router.js';
 import { initializeDocumentsPage } from './documents.js';
 

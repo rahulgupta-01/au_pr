@@ -1,4 +1,6 @@
 import { todayForCalculations, calcDays, escapeHTML } from './utils.js';
+// Import from the new centralized store
+import { state, setState, subscribe } from './store.js';
 
 // New: Milestone Notification Function
 function checkUpcomingMilestones(milestones) {
@@ -26,7 +28,6 @@ export function initializeDashboard(milestones, costData, config) {
   const dashboardContainer = document.querySelector('.main-content');
   if (!dashboardContainer) return;
 
-  let state = { points: {}, costs: {} };
   const D = (id) => dashboardContainer.querySelector(`#${id}`);
 
   const elements = {
@@ -49,28 +50,15 @@ export function initializeDashboard(milestones, costData, config) {
     pointsTargetDisplay: D('pointsTargetDisplay'),
   };
 
-  function saveState() {
-    try { localStorage.setItem('prDashboardState', JSON.stringify(state)); } catch {}
-  }
-
-  function loadState() {
-    try {
-      const saved = JSON.parse(localStorage.getItem('prDashboardState') || '{}');
-      if (typeof saved !== 'object' || !saved) return { points: {}, costs: {} };
-      return { points: {}, costs: {}, ...saved };
-    } catch (e) {
-      return { points: {}, costs: {} };
-    }
-  }
-
   // Helper function to handle checkbox interactions
-  function addCheckboxListeners(container, stateKey, renderFn) {
+  function addCheckboxListeners(container, stateKey) {
     container.querySelectorAll('.interactive-checkbox:not(:disabled)').forEach(box => {
       box.addEventListener('change', (e) => {
         const id = e.target.dataset.id;
-        state[stateKey][id] = !!e.target.checked;
-        saveState();
-        renderFn();
+        // Create a new state object based on the current state
+        const updatedStateSlice = { ...state[stateKey], [id]: !!e.target.checked };
+        // Use the centralized setState function to update the specific part of the state
+        setState({ [stateKey]: updatedStateSlice });
       });
     });
   }
@@ -136,7 +124,7 @@ export function initializeDashboard(milestones, costData, config) {
 
     const wrap = D('points-breakdown');
     if (wrap) {
-      addCheckboxListeners(wrap, 'points', renderPoints);
+      addCheckboxListeners(wrap, 'points');
       wrap.querySelectorAll('.tooltip-wrapper').forEach(wrapper => {
         wrapper.addEventListener('click', (e) => {
           document.querySelectorAll('.tooltip-wrapper.is-active').forEach(w => {
@@ -172,7 +160,7 @@ export function initializeDashboard(milestones, costData, config) {
 
     const wrap = D('cost-tracker');
     if (wrap) {
-      addCheckboxListeners(wrap, 'costs', renderCosts);
+      addCheckboxListeners(wrap, 'costs');
     }
   }
 
@@ -245,13 +233,10 @@ export function initializeDashboard(milestones, costData, config) {
         : 'Are you sure you want to reset the investment tracker?';
       if (confirm(message)) {
         if (type === 'points') {
-          state.points = {};
-          renderPoints();
+          setState({ points: {} });
         } else if (type === 'costs') {
-          state.costs = {};
-          renderCosts();
+          setState({ costs: {} });
         }
-        saveState();
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     };
@@ -267,16 +252,22 @@ export function initializeDashboard(milestones, costData, config) {
       resetBtn2.title = 'Reset Investment Tracker';
     }
   }
+  
+  // Subscribe to state changes to re-render the dynamic parts of the UI
+  subscribe(() => {
+    renderPoints();
+    renderCosts();
+  });
 
-  state = loadState();
+  // Initial setup
   renderPoints();
   renderCosts();
   updateMetrics();
   updateAlerts();
   initializeResetButtons();
-  checkUpcomingMilestones(milestones); // Add this call at the end
+  checkUpcomingMilestones(milestones);
   
-  // New: Remove skeletons and show content after initialization
+  // Remove skeletons and show content after initialization
   dashboardContainer.querySelectorAll('.skeleton-item').forEach(el => el.remove());
   dashboardContainer.querySelectorAll('.metric-item, #points-breakdown > *, #cost-tracker > *').forEach(el => {
     if(el.style.display === 'none') el.style.display = '';
