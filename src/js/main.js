@@ -49,9 +49,6 @@ async function fetchConfig() {
 
 async function initializeApp() {
   try {
-    // The entire 'serviceWorker' block has been removed from here.
-    // The vite-plugin-pwa now handles registration automatically.
-
     initializeUI();
 
     const config = await fetchConfig();
