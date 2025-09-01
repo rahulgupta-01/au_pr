@@ -3,15 +3,6 @@ import { renderPoints } from './components/points-calculator.js';
 import { renderCosts } from './components/cost-tracker.js';
 import { updateMetrics, updateAlerts } from './components/dashboard-metrics.js';
 
-export function animateProgressBar(element, widthPercentage) {
-  setTimeout(() => {
-    if (element) {
-      element.style.width = widthPercentage;
-      element.style.transform = 'scaleX(1)';
-    }
-  }, 100);
-}
-
 export function initializeDashboard(milestones, costData, pointsData, config) {
   const dashboardContainer = document.querySelector('.main-content');
   if (!dashboardContainer) return;
@@ -69,7 +60,7 @@ export function initializeDashboard(milestones, costData, pointsData, config) {
   initializeResetButtons();
 
   dashboardContainer.querySelectorAll('.skeleton-item').forEach(el => el.remove());
-  dashboardContainer.querySelectorAll('.metric-item, #points-breakdown > *, #cost-tracker > *').forEach(el => {
+  dashboardContainer.querySelectorAll('.key-metrics__item, #points-breakdown > *, #cost-tracker > *').forEach(el => {
     if(el.style.display === 'none') el.style.display = '';
   });
 }
