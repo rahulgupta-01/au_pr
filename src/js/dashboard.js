@@ -60,7 +60,7 @@ export function initializeDashboard(milestones, costData, pointsData, config) {
   initializeResetButtons();
 
   dashboardContainer.querySelectorAll('.skeleton-item').forEach(el => el.remove());
-  dashboardContainer.querySelectorAll('.key-metrics__item, #points-breakdown > *, #cost-tracker > *').forEach(el => {
+  dashboardContainer.querySelectorAll('.key-metrics__item, .points-calculator__item, .cost-tracker__item').forEach(el => {
     if(el.style.display === 'none') el.style.display = '';
   });
 }
