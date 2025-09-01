@@ -1,5 +1,5 @@
 // src/js/dashboard.js
-import { todayForCalculations, calcDays, escapeHTML, animateCountUp } from './utils.js';
+import { todayForCalculations, calcDays, escapeHTML, animateCountUp, animateCurrencyUp } from './utils.js';
 // Import from the new centralized store
 import { state, setState, subscribe } from './store.js';
 
@@ -150,7 +150,7 @@ export function initializeDashboard(milestones, costData, pointsData, config) {
     }).join('');
 
     elements.totalCostSpent.textContent = formatCurrency(totalSpent);
-    elements.totalSpentDisplay.textContent = formatCurrency(totalSpent);
+    animateCurrencyUp(elements.totalSpentDisplay, totalSpent, formatCurrency);
     elements.totalBudgetDisplay.textContent = `Budget: ${formatCurrency(totalBudget)}`;
     elements.investmentProgress.style.width = totalBudget > 0 ? `${Math.min(100, (totalSpent / totalBudget) * 100)}%` : '0%';
     elements.investmentProgress.style.transform = 'scaleX(1)';
