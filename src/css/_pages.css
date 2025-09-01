@@ -3,7 +3,7 @@
    ========================================================================== */
 
 /* --- Profile Page --- */
-.profile-layout {
+.profile {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -12,7 +12,7 @@
   margin: 0 auto;
 }
 
-.profile-layout .profile-picture {
+.profile__picture {
   width: 150px;
   height: 150px;
   border-radius: 50%;
@@ -21,12 +21,12 @@
   box-shadow: var(--shadow-medium);
 }
 
-.profile-info-container .profile-header {
+.profile__info .profile__header {
   text-align: center;
   margin-bottom: 2rem;
 }
 
-.profile-header .profile-name {
+.profile__name {
   font-family: var(--font-secondary);
   font-size: 2rem;
   font-weight: 700;
@@ -34,7 +34,7 @@
   margin-bottom: 0.25rem;
 }
 
-.profile-header .profile-title {
+.profile__job-title {
   font-size: 1.1rem;
   font-weight: 400;
   color: var(--text-medium);
@@ -42,7 +42,7 @@
   line-height: 1.5;
 }
 
-.profile-header .profile-location {
+.profile__location {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -50,7 +50,7 @@
   font-size: 0.95rem;
 }
 
-.profile-info-container .profile-summary-item {
+.profile__summary-item {
   display: flex;
   text-align: left;
   align-items: flex-start;
@@ -58,7 +58,7 @@
   margin-bottom: 1.25rem;
 }
 
-.profile-summary-item i {
+.profile__summary-item i {
   font-size: 1.5rem;
   color: var(--primary-color);
   margin-top: 5px;
@@ -67,7 +67,7 @@
   flex-shrink: 0;
 }
 
-.profile-summary-item .profile-summary-content h4 {
+.profile__summary-content h4 {
   font-family: var(--font-secondary);
   font-weight: 600;
   margin-bottom: 2px;
@@ -75,14 +75,14 @@
   color: var(--text-dark);
 }
 
-.profile-summary-item .profile-summary-content p,
-.profile-summary-item .profile-summary-content ul {
+.profile__summary-content p,
+.profile__summary-content ul {
   font-size: 0.95rem;
   color: var(--text-medium);
 }
 
 /* --- Visa Page --- */
-.visa-item {
+.visa-history__item {
   background: var(--bg-light);
   padding: 1.25rem;
   border: 1px solid var(--border-color);
@@ -90,21 +90,21 @@
   margin-bottom: 1.25rem;
 }
 
-.visa-item:last-child {
+.visa-history__item:last-child {
   margin-bottom: 0;
 }
 
-.visa-item h3 {
+.visa-history__item h3 {
   color: var(--primary-color);
   margin-bottom: 0.6rem;
 }
 
-.visa-item ul {
+.visa-history__item ul {
   list-style: none;
   padding-left: 5px;
 }
 
-.visa-item li {
+.visa-history__item li {
   margin-bottom: 5px;
   color: var(--text-medium);
 }
@@ -172,13 +172,13 @@
   display: inline-block;
 }
 
-.status-badge.status-green {
+.status-badge--green {
   background-color: var(--success-color);
 }
-.status-badge.status-orange {
+.status-badge--orange {
   background-color: var(--warning-color);
 }
-.status-badge.status-red {
+.status-badge--red {
   background-color: var(--error-color);
 }
 
@@ -200,7 +200,7 @@
   z-index: 0;
 }
 
-#timeline-progress-fill {
+.timeline__progress-fill {
   position: absolute;
   left: 30px;
   top: 0;
@@ -212,20 +212,20 @@
   transition: height 1s ease-out;
 }
 
-.milestone {
+.timeline__milestone {
   position: relative;
   margin-bottom: 1.5rem;
   padding-left: 65px;
 }
 
-.milestone-header {
+.timeline__header {
   display: flex;
   align-items: center;
   gap: 1rem;
   cursor: pointer;
 }
 
-.milestone-icon {
+.timeline__icon {
   position: absolute;
   left: 18px;
   top: 5px;
@@ -244,21 +244,21 @@
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.milestone-header:hover .milestone-icon {
+.timeline__header:hover .timeline__icon {
   transform: scale(1.1) rotate(5deg);
 }
 
-.completed {
+.timeline__icon--completed {
   background: var(--success-color);
   box-shadow-color: var(--success-color);
 }
 
-.future {
+.timeline__icon--future {
   background: var(--info-color);
   box-shadow-color: var(--info-color);
 }
 
-.milestone-content {
+.timeline__content {
   background: var(--card-bg);
   padding: 1.25rem;
   border-radius: var(--border-radius-md);
@@ -267,24 +267,24 @@
   transition: all var(--transition-speed) ease;
 }
 
-.milestone-header:hover .milestone-content {
+.timeline__header:hover .timeline__content {
   border-left-color: var(--secondary-color);
 }
 
-.milestone-title {
+.timeline__title {
   font-size: 1.2rem;
   font-weight: 600;
   font-family: var(--font-secondary);
   color: var(--text-dark);
 }
 
-.milestone-date {
+.timeline__date {
   color: var(--text-light);
   font-size: 0.9rem;
   font-weight: 500;
 }
 
-.milestone-details {
+.timeline__details {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.5s ease-in-out, margin-top 0.5s ease-in-out;
@@ -294,7 +294,7 @@
   padding-left: 65px;
 }
 
-.milestone-details.visible {
+.timeline__details--visible {
   max-height: 500px;
   margin-top: 1rem;
 }
@@ -316,13 +316,6 @@
   gap: 1.25rem;
 }
 
-.contact-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
 .contact-card {
   display: flex;
   align-items: center;
@@ -335,13 +328,17 @@
   transition: all 0.2s ease-in-out;
 }
 
+.contact-card--with-action {
+  justify-content: space-between;
+}
+
 .contact-card:hover {
   box-shadow: var(--shadow-light);
   border-color: var(--primary-color);
   text-decoration: none;
 }
 
-.contact-icon {
+.contact-card__icon {
   font-size: 2.5rem;
   color: var(--primary-color);
   width: 50px;
@@ -349,31 +346,31 @@
   transition: color 0.2s ease-in-out;
 }
 
-.contact-card.linkedin:hover .contact-icon {
+.contact-card--linkedin:hover .contact-card__icon {
   color: #0077B5;
 }
-.contact-card.instagram:hover .contact-icon {
+.contact-card--instagram:hover .contact-card__icon {
   color: #E4405F;
 }
-.contact-card.facebook:hover .contact-icon {
+.contact-card--facebook:hover .contact-card__icon {
   color: #1877F2;
 }
-.contact-card.github:hover .contact-icon {
+.contact-card--github:hover .contact-card__icon {
   color: #333;
 }
 
-.contact-info span {
+.contact-card__info span {
   font-weight: 500;
   font-size: 1.1rem;
   display: block;
 }
 
-.contact-info small {
+.contact-card__info small {
   color: var(--text-light);
   font-size: 0.9rem;
 }
 
-.social-grid .contact-item .contact-info-link {
+.contact-grid--social .contact-card--with-action .contact-card__link {
     display: flex; 
     align-items: center; 
     gap: 0.75rem; 
