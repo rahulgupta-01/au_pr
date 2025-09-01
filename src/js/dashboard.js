@@ -25,6 +25,18 @@ function checkUpcomingMilestones(milestones) {
   }
 }
 
+// NEW: Helper function to trigger progress bar animations reliably
+function animateProgressBar(element, widthPercentage) {
+  // A small delay ensures the browser renders the initial 0-width state before animating
+  setTimeout(() => {
+    if (element) {
+      element.style.width = widthPercentage;
+      element.style.transform = 'scaleX(1)';
+    }
+  }, 100); // 100ms delay is usually safe
+}
+
+
 export function initializeDashboard(milestones, costData, pointsData, config) {
   const dashboardContainer = document.querySelector('.main-content');
   if (!dashboardContainer) return;
@@ -56,9 +68,7 @@ export function initializeDashboard(milestones, costData, pointsData, config) {
     container.querySelectorAll('.interactive-checkbox:not(:disabled)').forEach(box => {
       box.addEventListener('change', (e) => {
         const id = e.target.dataset.id;
-        // Create a new state object based on the current state
         const updatedStateSlice = { ...state[stateKey], [id]: !!e.target.checked };
-        // Use the centralized setState function to update the specific part of the state
         setState({ [stateKey]: updatedStateSlice });
       });
     });
@@ -116,8 +126,8 @@ export function initializeDashboard(milestones, costData, pointsData, config) {
 
     elements.currentTotalPoints.textContent = currentTotal;
     animateCountUp(elements.currentPoints, currentTotal);
-    elements.pointsProgress.style.width = `${Math.min(100, (currentTotal / config.pointsTarget) * 100)}%`;
-    elements.pointsProgress.style.transform = 'scaleX(1)';
+    const pointsWidth = `${Math.min(100, (currentTotal / config.pointsTarget) * 100)}%`;
+    animateProgressBar(elements.pointsProgress, pointsWidth);
 
     if (elements.pointsBreakdown) {
       addCheckboxListeners(elements.pointsBreakdown, 'points');
@@ -152,8 +162,8 @@ export function initializeDashboard(milestones, costData, pointsData, config) {
     elements.totalCostSpent.textContent = formatCurrency(totalSpent);
     animateCurrencyUp(elements.totalSpentDisplay, totalSpent, formatCurrency);
     elements.totalBudgetDisplay.textContent = `Budget: ${formatCurrency(totalBudget)}`;
-    elements.investmentProgress.style.width = totalBudget > 0 ? `${Math.min(100, (totalSpent / totalBudget) * 100)}%` : '0%';
-    elements.investmentProgress.style.transform = 'scaleX(1)';
+    const investmentWidth = totalBudget > 0 ? `${Math.min(100, (totalSpent / totalBudget) * 100)}%` : '0%';
+    animateProgressBar(elements.investmentProgress, investmentWidth);
 
     if (elements.costTracker) {
       addCheckboxListeners(elements.costTracker, 'costs');
@@ -175,8 +185,8 @@ export function initializeDashboard(milestones, costData, pointsData, config) {
 
     const totalVisaDuration = Math.max(1, calcDays(config.journeyStartDate, activeExpiryDate));
     const visaTimeUsed = Math.max(0, calcDays(config.journeyStartDate, todayForCalculations));
-    elements.visaTimeProgress.style.width = `${Math.min(100, (visaTimeUsed / totalVisaDuration) * 100)}%`;
-    elements.visaTimeProgress.style.transform = 'scaleX(1)';
+    const visaWidth = `${Math.min(100, (visaTimeUsed / totalVisaDuration) * 100)}%`;
+    animateProgressBar(elements.visaTimeProgress, visaWidth);
 
     if (elements.pointsTargetDisplay) {
       elements.pointsTargetDisplay.textContent = `Target: ${config.pointsTarget}`;
@@ -193,13 +203,12 @@ export function initializeDashboard(milestones, costData, pointsData, config) {
       const prevMDate = prevIndex >= 0 ? new Date(milestones[prevIndex].date) : new Date(config.journeyStartDate);
       const totalDaysBetween = Math.max(1, calcDays(prevMDate, nextM.date));
       const daysElapsed = Math.max(0, calcDays(prevMDate, todayForCalculations));
-      elements.milestoneProgress.style.width = `${Math.min(100, (daysElapsed / totalDaysBetween) * 100)}%`;
-      elements.milestoneProgress.style.transform = 'scaleX(1)';
+      const milestoneWidth = `${Math.min(100, (daysElapsed / totalDaysBetween) * 100)}%`;
+      animateProgressBar(elements.milestoneProgress, milestoneWidth);
     } else {
       elements.nextMilestoneCountdown.textContent = '—';
       elements.nextMilestoneTitle.textContent = 'All milestones completed';
-      elements.milestoneProgress.style.width = '100%';
-      elements.milestoneProgress.style.transform = 'scaleX(1)';
+      animateProgressBar(elements.milestoneProgress, '100%');
     }
   }
 
