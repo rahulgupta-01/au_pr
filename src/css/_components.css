@@ -3,20 +3,20 @@
    ========================================================================== */
 
 /* --- Metrics Panel --- */
-.key-metrics-panel {
+.key-metrics {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1.25rem;
   padding: 1.5rem;
 }
 
-.metric-item {
+.key-metrics__item {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
 }
 
-.metric-header {
+.key-metrics__header {
   display: flex;
   align-items: center;
   gap: 0.6rem;
@@ -26,43 +26,42 @@
   margin-bottom: 0.6rem;
 }
 
-.metric-header i {
+.key-metrics__header i {
   color: var(--primary-color);
 }
 
-.metric-value {
+.key-metrics__value {
   font-size: 2.2rem;
   font-weight: 700;
   font-family: var(--font-secondary);
   color: var(--primary-color);
 }
 
-.metric-detail {
+.key-metrics__detail {
   font-size: 0.9rem;
   color: var(--text-light);
   margin-bottom: 0.6rem;
 }
 
-.progress-indicator {
+.key-metrics__progress {
   background: #e9ecef;
   height: 6px;
   border-radius: 3px;
   overflow: hidden;
 }
 
-.progress-fill {
+.key-metrics__progress-fill {
   height: 100%;
   border-radius: 3px;
-  width: 0; /* Start the bar at 0 width */
-  transform: scaleX(0); /* Start scaled down to nothing */
-  transform-origin: left; /* Ensure it grows from left to right */
-  transition: width 0.8s ease-in-out, transform 0.8s ease-in-out; /* Animate both properties */
+  width: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: width 0.8s ease-in-out, transform 0.8s ease-in-out;
 }
 
-
 /* --- Calculators & Trackers --- */
-.points-item,
-.cost-item {
+.points-calculator__item,
+.cost-tracker__item {
   display: flex;
   gap: 0.75rem;
   padding: 0.75rem;
@@ -71,36 +70,37 @@
   font-size: 0.95rem;
 }
 
-.points-item:last-of-type,
-.cost-item:last-of-type {
+.points-calculator__item:last-of-type,
+.cost-tracker__item:last-of-type {
   border-bottom: none;
 }
 
-.item-label {
+.points-calculator__label,
+.cost-tracker__label {
   font-weight: 500;
   flex-grow: 1;
   cursor: pointer;
 }
 
-.cost-item span:last-of-type {
+.cost-tracker__item span:last-of-type {
   margin-left: auto;
 }
 
-.points-value {
+.points-calculator__value {
   font-weight: 700;
   width: 40px;
   text-align: right;
 }
 
-.points-achieved {
+.points-calculator__value--achieved {
   color: var(--success-color);
 }
-.points-pending {
+.points-calculator__value--pending {
   color: var(--warning-color);
 }
 
-.points-total-row,
-.cost-total {
+.points-calculator__total,
+.cost-tracker__total {
   display: flex;
   justify-content: space-between;
   padding: 1rem;
@@ -141,7 +141,7 @@
 }
 
 /* --- Buttons --- */
-.reset-btn {
+.reset-button {
   background: none;
   border: 1px solid var(--border-color);
   color: var(--text-light);
@@ -155,13 +155,13 @@
   transition: all 0.2s ease;
 }
 
-.reset-btn:hover {
+.reset-button:hover {
   color: var(--error-color);
   border-color: var(--error-color);
   transform: rotate(-45deg);
 }
 
-.toggle-btn-group {
+.toggle-buttons {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -169,7 +169,7 @@
   margin-bottom: 1.5rem;
 }
 
-.toggle-btn {
+.toggle-buttons__button {
   background: var(--card-bg);
   color: var(--text-dark);
   border: 1px solid var(--border-color);
@@ -180,20 +180,20 @@
   transition: all var(--transition-speed) ease;
 }
 
-.toggle-btn:hover {
+.toggle-buttons__button:hover {
   background: var(--bg-light);
   transform: translateY(-2px);
   border-color: var(--primary-color);
 }
 
-.toggle-btn.active {
+.toggle-buttons__button.active {
   background: var(--primary-color);
   color: white;
   border-color: var(--primary-color);
   box-shadow: var(--shadow-light);
 }
 
-.copy-btn {
+.copy-button {
   background: #f0f0f0;
   border: 1px solid var(--border-color);
   color: var(--text-light);
@@ -208,7 +208,7 @@
   position: relative;
 }
 
-.copy-btn:hover {
+.copy-button:hover {
   background: var(--primary-color);
   color: white;
 }
@@ -230,22 +230,22 @@
   margin-bottom: 0;
 }
 
-.alert-success {
+.alert--success {
   background: #E8F5E9;
   border-color: var(--success-color);
   color: #1B5E20;
 }
-.alert-warning {
+.alert--warning {
   background: #FFF8E1;
   border-color: var(--warning-color);
   color: #8D6E63;
 }
-.alert-info {
+.alert--info {
   background: #E3F2FD;
   border-color: var(--info-color);
   color: #0D47A1;
 }
-.alert-error {
+.alert--error {
   background: #FFEBEE;
   border-color: var(--error-color);
   color: #B71C1C;
@@ -254,11 +254,11 @@
   font-size: 1.4rem;
 }
 
-.key-links-list {
+.key-links {
   list-style: none;
 }
 
-.key-links-list a {
+.key-links__item a {
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -268,13 +268,13 @@
   transition: all 0.2s ease-in-out;
 }
 
-.key-links-list a:hover {
+.key-links__item a:hover {
   background-color: #e3f2fd;
   transform: translateX(5px);
   text-decoration: none;
 }
 
-.key-links-list i {
+.key-links__item i {
   color: var(--secondary-color);
   width: 20px;
   text-align: center;
@@ -294,7 +294,7 @@
   border-bottom: 1px dotted var(--text-light);
 }
 
-.tooltiptext {
+.tooltip-text {
   visibility: hidden;
   opacity: 0;
   position: absolute;
@@ -316,13 +316,13 @@
   transition: opacity 0.2s, visibility 0.2s;
 }
 
-.tooltip-wrapper:hover .tooltiptext,
-.tooltip-wrapper.is-active .tooltiptext {
+.tooltip-wrapper:hover .tooltip-text,
+.tooltip-wrapper.is-active .tooltip-text {
   visibility: visible;
   opacity: 1;
 }
 
-.copy-btn .tooltip-text {
+.copy-button .tooltip-text {
   white-space: nowrap;
   pointer-events: none;
   visibility: hidden;
@@ -341,13 +341,13 @@
   font-size: 0.9rem;
 }
 
-.copy-btn.copied .tooltip-text {
+.copy-button.copied .tooltip-text {
   visibility: visible;
   opacity: 1;
 }
 
 /* --- Theme Switch --- */
-.theme-switch-wrapper {
+.theme-switch {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -355,25 +355,25 @@
   padding: 0.6rem 1rem;
 }
 
-.theme-switch-wrapper i {
+.theme-switch i {
   color: var(--text-medium);
   font-size: 1.1rem;
 }
 
-.theme-switch {
+.theme-switch__label {
   position: relative;
   display: inline-block;
   width: 50px;
   height: 26px;
 }
 
-.theme-switch input {
+.theme-switch__input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.slider {
+.theme-switch__slider {
   position: absolute;
   cursor: pointer;
   inset: 0;
@@ -382,7 +382,7 @@
   border-radius: 26px;
 }
 
-.slider:before {
+.theme-switch__slider:before {
   position: absolute;
   content: "";
   height: 18px;
@@ -394,10 +394,10 @@
   border-radius: 50%;
 }
 
-input:checked+.slider {
+.theme-switch__input:checked + .theme-switch__slider {
   background-color: var(--primary-color);
 }
 
-input:checked+.slider:before {
+.theme-switch__input:checked + .theme-switch__slider:before {
   transform: translateX(24px);
 }
