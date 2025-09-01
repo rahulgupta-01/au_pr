@@ -43,6 +43,7 @@ export function updateMetrics(milestones, config, elements) {
     elements.pointsTargetDisplay.textContent = `Target: ${config.pointsTarget}`;
   }
 
+  // This is the corrected line:
   const futureMilestones = milestones.filter(m => new Date(m.date) > todayForCalculations);
   if (futureMilestones.length > 0) {
     const nextM = futureMilestones[0];
