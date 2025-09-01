@@ -8,22 +8,22 @@
   .contact-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  .social-grid {
+  .contact-grid--social {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
 @media (min-width: 768px) {
-  .profile-layout {
+  .profile {
     flex-direction: row;
     align-items: flex-start;
     gap: 2rem;
   }
-  .profile-layout .profile-picture {
+  .profile__picture {
     width: 180px;
     height: 180px;
   }
-  .profile-info-container .profile-header {
+  .profile__header {
     text-align: left;
   }
 }
@@ -32,30 +32,30 @@
   .container {
     padding: 1rem;
   }
-  .header h1 {
+  .site-header__title {
     font-size: 1.5rem;
   }
   .card {
     padding: 1.25rem;
   }
-  .date-time-container {
+  .site-header__date-time {
     flex-direction: column;
     gap: 5px;
     white-space: normal;
     text-align: center;
   }
-  .card-header {
+  .card__header {
     justify-content: flex-start; /* Aligns header items to the start */
   }
 
-  .contact-info span {
+  .contact-card__info span {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
-  .contact-item {
-    flex-wrap: nowrap; /* Allows items (like the copy button) to wrap if needed */
+  .contact-card--with-action {
+    flex-wrap: nowrap;
   }
   .document-table thead {
     display: none;
@@ -103,15 +103,15 @@
 }
 
 @media (max-width: 576px) {
-  .key-metrics-panel {
+  .key-metrics {
     grid-template-columns: 1fr;
   }
 }
 
 @media (hover: hover) {
-  .hamburger-menu:hover,
-  .close-menu:hover,
-  .header-home-link:hover {
+  .site-header__menu-toggle:hover,
+  .nav-menu__close:hover,
+  .site-header__home-link:hover {
     background-color: rgba(255, 255, 255, 0.1);
   }
 }
