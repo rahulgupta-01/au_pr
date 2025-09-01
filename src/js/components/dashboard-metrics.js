@@ -1,5 +1,4 @@
-import { todayForCalculations, calcDays, escapeHTML, animateCountUp } from '../utils.js';
-import { animateProgressBar } from '../dashboard.js';
+import { todayForCalculations, calcDays, escapeHTML, animateCountUp, animateProgressBar } from '../utils.js';
 
 function checkUpcomingMilestones(milestones) {
   const upcoming = milestones.filter(m => {
@@ -86,9 +85,9 @@ export function updateAlerts(milestones, config, elements) {
   if (alerts.length === 0) alerts.push({ type: 'success', msg: 'All systems are green. You are on track!' });
 
   elements.alertsContainer.innerHTML = alerts.map(a => {
-    const cls = a.type === 'success' ? 'alert-success' :
-                a.type === 'warning' ? 'alert-warning' :
-                a.type === 'error'   ? 'alert-error'   : 'alert-info';
+    const cls = a.type === 'success' ? 'alert--success' :
+                a.type === 'warning' ? 'alert--warning' :
+                a.type === 'error'   ? 'alert--error'   : 'alert-info';
     return `<div class="alert ${cls}"><i class="fas fa-info-circle" aria-hidden="true"></i>${a.msg}</div>`;
   }).join('');
 }
