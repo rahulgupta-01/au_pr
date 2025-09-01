@@ -31,7 +31,7 @@ export function animateCountUp(element, endValue, duration = 800) {
   window.requestAnimationFrame(step);
 }
 
-// NEW: Function to animate a currency value counting up
+// Function to animate a currency value counting up
 export function animateCurrencyUp(element, endValue, formatter, duration = 800) {
     let startTimestamp = null;
     const step = (timestamp) => {
@@ -44,4 +44,15 @@ export function animateCurrencyUp(element, endValue, formatter, duration = 800) 
         }
     };
     window.requestAnimationFrame(step);
+}
+
+// NEW: Helper function to trigger progress bar animations reliably
+export function animateProgressBar(element, widthPercentage) {
+  // A small delay ensures the browser renders the initial 0-width state before animating
+  setTimeout(() => {
+    if (element) {
+      element.style.width = widthPercentage;
+      element.style.transform = 'scaleX(1)';
+    }
+  }, 100); // 100ms delay is usually safe
 }
