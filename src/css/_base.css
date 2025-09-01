@@ -150,7 +150,7 @@ a:hover {
   transform: translateY(-5px) translateZ(0);
 }
 
-.card-header {
+.card__header {
   font-family: var(--font-secondary);
   font-weight: 600;
   font-size: 1.4rem;
@@ -164,7 +164,7 @@ a:hover {
   padding-bottom: 1rem;
 }
 
-.card-header i {
+.card__header i {
   color: var(--secondary-color);
 }
 
