@@ -49,7 +49,7 @@ export function updateMetrics(milestones, config, elements) {
     const nextM = futureMilestones[0];
     const daysToNext = calcDays(todayForCalculations, nextM.date);
     animateCountUp(elements.nextMilestoneCountdown, daysToNext);
-    elements.nextMilestoneTitle.textContent = escapeHTML((nextM.title || '').replace(/[^\w\s]/gi, '').trim());
+    elements.nextMilestoneTitle.textContent = escapeHTML((nextM.title || '').trim());
 
     const prevIndex = Math.max(0, milestones.findIndex(m => m.id === nextM.id) - 1);
     const prevMDate = prevIndex >= 0 ? new Date(milestones[prevIndex].date) : new Date(config.journeyStartDate);
