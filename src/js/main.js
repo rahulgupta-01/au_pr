@@ -56,7 +56,8 @@ async function initializeApp() {
 
     const runPageScripts = (path) => {
       initializeUI();
-      if (document.querySelector('.key-metrics-panel')) {
+      // This is the corrected line:
+      if (document.querySelector('.key-metrics')) {
         initializeDashboard(milestones, costData, pointsData, config);
       }
       if (document.getElementById('timeline')) {
