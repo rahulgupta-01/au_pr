@@ -1,5 +1,5 @@
 // src/js/dashboard.js
-import { todayForCalculations, calcDays, escapeHTML } from './utils.js';
+import { todayForCalculations, calcDays, escapeHTML, animateCountUp } from './utils.js';
 // Import from the new centralized store
 import { state, setState, subscribe } from './store.js';
 
@@ -115,8 +115,9 @@ export function initializeDashboard(milestones, costData, pointsData, config) {
     }).join('');
 
     elements.currentTotalPoints.textContent = currentTotal;
-    elements.currentPoints.textContent = currentTotal;
+    animateCountUp(elements.currentPoints, currentTotal);
     elements.pointsProgress.style.width = `${Math.min(100, (currentTotal / config.pointsTarget) * 100)}%`;
+    elements.pointsProgress.style.transform = 'scaleX(1)';
 
     if (elements.pointsBreakdown) {
       addCheckboxListeners(elements.pointsBreakdown, 'points');
@@ -152,6 +153,7 @@ export function initializeDashboard(milestones, costData, pointsData, config) {
     elements.totalSpentDisplay.textContent = formatCurrency(totalSpent);
     elements.totalBudgetDisplay.textContent = `Budget: ${formatCurrency(totalBudget)}`;
     elements.investmentProgress.style.width = totalBudget > 0 ? `${Math.min(100, (totalSpent / totalBudget) * 100)}%` : '0%';
+    elements.investmentProgress.style.transform = 'scaleX(1)';
 
     if (elements.costTracker) {
       addCheckboxListeners(elements.costTracker, 'costs');
@@ -164,12 +166,17 @@ export function initializeDashboard(milestones, costData, pointsData, config) {
     const activeExpiryDate = extensionApplied ? config.finalVisaExpiryDate : config.initialVisaExpiryDate;
 
     const daysLeft = calcDays(todayForCalculations, activeExpiryDate);
-    elements.daysRemaining.textContent = daysLeft > 0 ? daysLeft : 'BVA';
+    if (daysLeft > 0) {
+        animateCountUp(elements.daysRemaining, daysLeft);
+    } else {
+        elements.daysRemaining.textContent = 'BVA';
+    }
     elements.visaStatus.textContent = extensionApplied ? 'Expires Feb 2028 (Ext. Active)' : 'Expires Feb 2027 (Ext. Pending)';
 
     const totalVisaDuration = Math.max(1, calcDays(config.journeyStartDate, activeExpiryDate));
     const visaTimeUsed = Math.max(0, calcDays(config.journeyStartDate, todayForCalculations));
     elements.visaTimeProgress.style.width = `${Math.min(100, (visaTimeUsed / totalVisaDuration) * 100)}%`;
+    elements.visaTimeProgress.style.transform = 'scaleX(1)';
 
     if (elements.pointsTargetDisplay) {
       elements.pointsTargetDisplay.textContent = `Target: ${config.pointsTarget}`;
@@ -178,7 +185,8 @@ export function initializeDashboard(milestones, costData, pointsData, config) {
     const futureMilestones = milestones.filter(m => new Date(m.date) > todayForCalculations);
     if (futureMilestones.length > 0) {
       const nextM = futureMilestones[0];
-      elements.nextMilestoneCountdown.textContent = calcDays(todayForCalculations, nextM.date);
+      const daysToNext = calcDays(todayForCalculations, nextM.date);
+      animateCountUp(elements.nextMilestoneCountdown, daysToNext);
       elements.nextMilestoneTitle.textContent = escapeHTML((nextM.title || '').replace(/[^\w\s]/gi, '').trim());
 
       const prevIndex = Math.max(0, milestones.findIndex(m => m.id === nextM.id) - 1);
@@ -186,10 +194,12 @@ export function initializeDashboard(milestones, costData, pointsData, config) {
       const totalDaysBetween = Math.max(1, calcDays(prevMDate, nextM.date));
       const daysElapsed = Math.max(0, calcDays(prevMDate, todayForCalculations));
       elements.milestoneProgress.style.width = `${Math.min(100, (daysElapsed / totalDaysBetween) * 100)}%`;
+      elements.milestoneProgress.style.transform = 'scaleX(1)';
     } else {
       elements.nextMilestoneCountdown.textContent = '—';
       elements.nextMilestoneTitle.textContent = 'All milestones completed';
       elements.milestoneProgress.style.width = '100%';
+      elements.milestoneProgress.style.transform = 'scaleX(1)';
     }
   }
 
