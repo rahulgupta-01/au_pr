@@ -43,7 +43,7 @@ export function updateMetrics(milestones, config, elements) {
     elements.pointsTargetDisplay.textContent = `Target: ${config.pointsTarget}`;
   }
 
-  const futureMilestones = milestones.filter(m => new Date(m.date) > todayForCalculations);
+  const futureMilestones = milestones.filter(m => new Date(m.date) > today.getFullYear());
   if (futureMilestones.length > 0) {
     const nextM = futureMilestones[0];
     const daysToNext = calcDays(todayForCalculations, nextM.date);
@@ -87,7 +87,7 @@ export function updateAlerts(milestones, config, elements) {
   elements.alertsContainer.innerHTML = alerts.map(a => {
     const cls = a.type === 'success' ? 'alert--success' :
                 a.type === 'warning' ? 'alert--warning' :
-                a.type === 'error'   ? 'alert--error'   : 'alert-info';
+                a.type === 'error'   ? 'alert--error'   : 'alert--info';
     return `<div class="alert ${cls}"><i class="fas fa-info-circle" aria-hidden="true"></i>${a.msg}</div>`;
   }).join('');
 }
