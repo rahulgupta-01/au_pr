@@ -1,6 +1,5 @@
 import { state, setState } from '../store.js';
-import { escapeHTML, animateCurrencyUp } from '../utils.js';
-import { animateProgressBar } from '../dashboard.js';
+import { escapeHTML, animateCurrencyUp, animateProgressBar } from '../utils.js';
 
 function addCheckboxListeners(container, stateKey) {
   container.querySelectorAll('.interactive-checkbox:not(:disabled)').forEach(box => {
@@ -24,9 +23,9 @@ export function renderCosts(costData, elements) {
     if (isChecked) {
       totalSpent += c.amount;
     }
-    return `<div class="cost-item">
+    return `<div class="cost-tracker__item">
         <input type="checkbox" class="interactive-checkbox" id="cost_${escapeHTML(c.id)}" data-id="${escapeHTML(c.id)}" ${isChecked ? 'checked' : ''} ${isPaid ? 'disabled' : ''}>
-        <label for="cost_${escapeHTML(c.id)}">${escapeHTML(c.label)}</label>
+        <label for="cost_${escapeHTML(c.id)}" class="cost-tracker__label">${escapeHTML(c.label)}</label>
         <span>${formatCurrency(c.amount)}</span>
       </div>`;
   }).join('');
