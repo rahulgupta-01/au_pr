@@ -46,13 +46,12 @@ export function animateCurrencyUp(element, endValue, formatter, duration = 800) 
     window.requestAnimationFrame(step);
 }
 
-// NEW: Helper function to trigger progress bar animations reliably
+// Helper function to trigger progress bar animations reliably
 export function animateProgressBar(element, widthPercentage) {
-  // A small delay ensures the browser renders the initial 0-width state before animating
   setTimeout(() => {
     if (element) {
       element.style.width = widthPercentage;
       element.style.transform = 'scaleX(1)';
     }
-  }, 100); // 100ms delay is usually safe
+  }, 100);
 }
