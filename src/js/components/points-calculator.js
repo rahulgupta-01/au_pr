@@ -1,6 +1,5 @@
 import { state, setState } from '../store.js';
-import { todayForCalculations, escapeHTML, animateCountUp } from '../utils.js';
-import { animateProgressBar } from '../dashboard.js';
+import { todayForCalculations, escapeHTML, animateCountUp, animateProgressBar } from '../utils.js';
 
 function addCheckboxListeners(container, stateKey) {
   container.querySelectorAll('.interactive-checkbox:not(:disabled)').forEach(box => {
@@ -49,14 +48,15 @@ export function renderPoints(pointsData, milestones, config, elements) {
     const isChecked = !!state.points[p.id] || isAchievedByDate || !!p.initial;
     const displayPoints = isChecked ? p.points : (p.currentPoints || 0);
     currentTotal += displayPoints;
-    return `<div class="points-item">
+    const valueModifier = isChecked ? 'points-calculator__value--achieved' : 'points-calculator__value--pending';
+    return `<div class="points-calculator__item">
       <input type="checkbox" class="interactive-checkbox" id="check_${escapeHTML(p.id)}" data-id="${escapeHTML(p.id)}" ${isChecked ? 'checked' : ''} ${isAchievedByDate ? 'disabled' : ''}>
-      <label for="check_${escapeHTML(p.id)}" class="item-label">${escapeHTML(p.label)}</label>
+      <label for="check_${escapeHTML(p.id)}" class="points-calculator__label">${escapeHTML(p.label)}</label>
       <div class="tooltip-wrapper">
         <span class="tooltip" aria-label="More info">(i)</span>
-        <div class="tooltiptext">${escapeHTML(p.tooltip)}</div>
+        <div class="tooltip-text">${escapeHTML(p.tooltip)}</div>
       </div>
-      <span class="points-value ${isChecked ? 'points-achieved' : 'points-pending'}">${displayPoints}</span>
+      <span class="points-calculator__value ${valueModifier}">${displayPoints}</span>
     </div>`;
   }).join('');
 
