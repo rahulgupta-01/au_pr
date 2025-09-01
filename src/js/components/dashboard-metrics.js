@@ -43,7 +43,7 @@ export function updateMetrics(milestones, config, elements) {
     elements.pointsTargetDisplay.textContent = `Target: ${config.pointsTarget}`;
   }
 
-  const futureMilestones = milestones.filter(m => new Date(m.date) > today.getFullYear());
+  const futureMilestones = milestones.filter(m => new Date(m.date) > todayForCalculations.getFullYear());
   if (futureMilestones.length > 0) {
     const nextM = futureMilestones[0];
     const daysToNext = calcDays(todayForCalculations, nextM.date);
